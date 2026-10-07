@@ -1,0 +1,407 @@
+.daily-plan-page {
+  min-height: 100vh;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+/* Navbar */
+
+.daily-navbar {
+  height: 70px;
+  padding: 0 7%;
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.daily-logo {
+  color: #2563eb;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.daily-nav-links {
+  display: flex;
+  gap: 10px;
+}
+
+.daily-nav-links button {
+  border: none;
+  background: transparent;
+  padding: 9px 14px;
+
+  color: #475569;
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+.daily-nav-links button:hover {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+/* Header */
+
+.daily-header {
+  max-width: 900px;
+  margin: auto;
+  padding: 55px 25px 30px;
+  text-align: center;
+}
+
+.daily-label {
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.daily-header h1 {
+  margin: 10px 0 15px;
+  font-size: 40px;
+}
+
+.daily-header p {
+  color: #64748b;
+  font-size: 16px;
+}
+
+/* Progress */
+
+.daily-progress-card {
+  max-width: 1050px;
+  margin: 10px auto 45px;
+  padding: 25px;
+
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+}
+
+.daily-progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.daily-progress-top span {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.daily-progress-top h2 {
+  color: #2563eb;
+  font-size: 30px;
+}
+
+.completed-count {
+  color: #475569;
+  font-weight: 700;
+}
+
+.daily-progress-bar {
+  height: 11px;
+  margin-top: 15px;
+
+  background: #e2e8f0;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.daily-progress-bar div {
+  height: 100%;
+  background: #2563eb;
+  border-radius: 20px;
+  transition: width 0.4s ease;
+}
+
+.daily-progress-card p {
+  margin-top: 10px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* Container */
+
+.daily-container {
+  max-width: 1050px;
+  margin: auto;
+  padding: 0 25px;
+}
+
+.daily-title {
+  margin-bottom: 25px;
+}
+
+.daily-title h2 {
+  font-size: 27px;
+}
+
+.daily-title p {
+  color: #64748b;
+}
+
+/* Daily List */
+
+.daily-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.daily-card {
+  display: grid;
+  grid-template-columns: 55px 1fr;
+  gap: 18px;
+
+  padding: 20px;
+
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  transition: 0.2s;
+}
+
+.daily-card:hover {
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
+}
+
+.daily-card.completed {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.day-number {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #eff6ff;
+  color: #2563eb;
+
+  border-radius: 50%;
+
+  font-weight: 800;
+}
+
+.completed .day-number {
+  background: #16a34a;
+  color: #fff;
+}
+
+/* Card Header */
+
+.daily-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.week-tag {
+  display: inline-block;
+
+  padding: 4px 9px;
+
+  background: #eff6ff;
+  color: #2563eb;
+
+  border-radius: 20px;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.daily-card h3 {
+  margin-top: 7px;
+  font-size: 19px;
+}
+
+.day-tag {
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Info */
+
+.daily-info {
+  margin-top: 15px;
+}
+
+.daily-info strong {
+  font-size: 13px;
+}
+
+.daily-info p {
+  margin-top: 3px;
+
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* Actions */
+
+.daily-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-top: 18px;
+}
+
+.watch-video {
+  padding: 9px 14px;
+
+  background: #fee2e2;
+  color: #dc2626;
+
+  border-radius: 8px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  text-decoration: none;
+}
+
+.watch-video:hover {
+  background: #fecaca;
+}
+
+.complete-btn,
+.completed-btn {
+  padding: 9px 14px;
+
+  border-radius: 8px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.complete-btn {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #475569;
+}
+
+.complete-btn:hover {
+  background: #f1f5f9;
+}
+
+.completed-btn {
+  border: none;
+  background: #16a34a;
+  color: #fff;
+}
+
+/* Bottom */
+
+.daily-bottom {
+  max-width: 1050px;
+  margin: 35px auto;
+
+  padding: 0 25px 50px;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.daily-back,
+.daily-next {
+  padding: 12px 20px;
+
+  border-radius: 9px;
+
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.daily-back {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+
+.daily-next {
+  border: none;
+  background: #2563eb;
+  color: #fff;
+}
+
+.daily-next:hover {
+  background: #1d4ed8;
+}
+
+/* Mobile */
+
+@media (max-width: 650px) {
+  .daily-navbar {
+    padding: 0 20px;
+  }
+
+  .daily-nav-links {
+    gap: 2px;
+  }
+
+  .daily-nav-links button {
+    padding: 6px;
+    font-size: 12px;
+  }
+
+  .daily-header {
+    padding: 40px 20px 25px;
+  }
+
+  .daily-header h1 {
+    font-size: 30px;
+  }
+
+  .daily-progress-card {
+    margin: 10px 20px 35px;
+  }
+
+  .daily-container {
+    padding: 0 15px;
+  }
+
+  .daily-card {
+    grid-template-columns: 1fr;
+  }
+
+  .daily-card-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .daily-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .watch-video,
+  .complete-btn,
+  .completed-btn {
+    text-align: center;
+    width: 100%;
+  }
+
+  .daily-bottom {
+    padding: 0 20px 40px;
+    flex-direction: column;
+  }
+
+  .daily-back,
+  .daily-next {
+    width: 100%;
+  }
+}

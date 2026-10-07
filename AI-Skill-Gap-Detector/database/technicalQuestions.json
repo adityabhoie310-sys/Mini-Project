@@ -1,0 +1,4 @@
+[
+      {"id": 1, "skill": "React", "prompt": "What is the role of virtual DOM in React reconciliation?", "options": ["Minimizes expensive real DOM operations by diffing trees", "Compiles JavaScript to native assembly", "Handles SQL queries on client side", "Encrypts local storage items"], "answer": 0},
+      {"id": 2, "skill": "Database", "prompt": "What does ACID stand for in databases?", "options": ["Atomicity, Consistency, Isolation, Durability", "Action, Clarity, Interface, Delivery", "Asynchronous, Cached, Indexed, Distributed", "Authentication, Cryptography, Integrity, Decryption"], "answer": 0}
+    ]

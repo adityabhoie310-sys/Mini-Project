@@ -1,0 +1,252 @@
+.reasoning-page {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding: 35px 7%;
+}
+
+/* Header */
+
+.reasoning-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.reasoning-header h1 {
+  font-size: 30px;
+  color: #0f172a;
+  margin-bottom: 5px;
+}
+
+.reasoning-header p {
+  color: #64748b;
+}
+
+/* Timer */
+
+.reasoning-timer {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 22px;
+  text-align: center;
+}
+
+.reasoning-timer span {
+  display: block;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.reasoning-timer strong {
+  display: block;
+  font-size: 22px;
+  color: #dc2626;
+  margin-top: 2px;
+}
+
+/* Progress */
+
+.reasoning-progress {
+  margin-bottom: 30px;
+}
+
+.reasoning-progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: #475569;
+  font-size: 14px;
+}
+
+.reasoning-progress-track {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.reasoning-progress-fill {
+  height: 100%;
+  background: #7c3aed;
+  border-radius: 20px;
+  transition: width 0.3s ease;
+}
+
+/* Question */
+
+.reasoning-question-container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.reasoning-question-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 35px;
+}
+
+.reasoning-question-number {
+  display: inline-block;
+  background: #f3e8ff;
+  color: #7c3aed;
+  padding: 7px 13px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.reasoning-question-topic {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.reasoning-question-card h2 {
+  font-size: 22px;
+  line-height: 1.5;
+  color: #0f172a;
+  margin-bottom: 28px;
+}
+
+/* Options */
+
+.reasoning-options {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.reasoning-option-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 16px;
+  border: 2px solid #e2e8f0;
+  background: #ffffff;
+  border-radius: 12px;
+  text-align: left;
+  color: #334155;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.reasoning-option-button:hover {
+  border-color: #c4b5fd;
+  background: #faf8ff;
+}
+
+.reasoning-option-button.selected {
+  border-color: #7c3aed;
+  background: #f3e8ff;
+  color: #6d28d9;
+}
+
+.reasoning-option-letter {
+  width: 35px;
+  height: 35px;
+  border: 1px solid #cbd5e1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.reasoning-option-button.selected
+.reasoning-option-letter {
+  background: #7c3aed;
+  border-color: #7c3aed;
+  color: #ffffff;
+}
+
+/* Navigation */
+
+.reasoning-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+.reasoning-counter {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.reasoning-previous-btn,
+.reasoning-next-btn,
+.reasoning-finish-btn {
+  border: none;
+  padding: 13px 22px;
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.reasoning-previous-btn {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.reasoning-previous-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.reasoning-next-btn,
+.reasoning-finish-btn {
+  background: #7c3aed;
+  color: #ffffff;
+}
+
+.reasoning-next-btn:hover,
+.reasoning-finish-btn:hover {
+  background: #6d28d9;
+}
+
+/* Responsive */
+
+@media (max-width: 700px) {
+  .reasoning-page {
+    padding: 25px 5%;
+  }
+
+  .reasoning-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .reasoning-timer {
+    width: 100%;
+  }
+
+  .reasoning-question-card {
+    padding: 22px;
+  }
+
+  .reasoning-question-card h2 {
+    font-size: 19px;
+  }
+
+  .reasoning-navigation {
+    gap: 10px;
+  }
+
+  .reasoning-counter {
+    display: none;
+  }
+
+  .reasoning-previous-btn,
+  .reasoning-next-btn,
+  .reasoning-finish-btn {
+    flex: 1;
+  }
+}

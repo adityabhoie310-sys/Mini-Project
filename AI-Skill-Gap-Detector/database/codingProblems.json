@@ -1,0 +1,4 @@
+[
+      {"id": 1, "title": "Two Sum", "difficulty": "Easy", "category": "Arrays & Hash Maps"},
+      {"id": 2, "title": "LRU Cache Implementation", "difficulty": "Medium", "category": "Data Structures"}
+    ]

@@ -1,0 +1,277 @@
+.assessment-result-page {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding: 40px 7%;
+}
+
+/* Header */
+
+.result-header {
+  margin-bottom: 30px;
+}
+
+.result-label {
+  display: inline-block;
+  color: #16a34a;
+  background: #dcfce7;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.result-header h1 {
+  font-size: 32px;
+  color: #0f172a;
+  margin-bottom: 5px;
+}
+
+.result-header p {
+  color: #64748b;
+}
+
+/* Overall */
+
+.overall-result {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 35px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 35px;
+}
+
+.score-circle {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: #eff6ff;
+  border: 10px solid #2563eb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.score-circle strong {
+  font-size: 38px;
+  color: #2563eb;
+}
+
+.score-circle span {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.level-badge {
+  display: inline-block;
+  background: #dcfce7;
+  color: #15803d;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.overall-content h2 {
+  font-size: 22px;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.overall-content p {
+  color: #64748b;
+}
+
+/* Breakdown */
+
+.score-section h2 {
+  color: #0f172a;
+  margin-bottom: 20px;
+}
+
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.score-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.score-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.score-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 23px;
+}
+
+.score-card h3 {
+  color: #0f172a;
+}
+
+.score-card-top span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.large-score {
+  font-size: 38px;
+  font-weight: 700;
+  color: #2563eb;
+  margin: 22px 0 10px;
+}
+
+.score-bar {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.score-bar div {
+  height: 100%;
+  background: #2563eb;
+  border-radius: 20px;
+}
+
+.score-card p {
+  color: #64748b;
+  font-size: 13px;
+  margin-top: 15px;
+}
+
+/* Next Steps */
+
+.result-next {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 30px;
+  margin-top: 35px;
+}
+
+.result-next h2 {
+  margin-bottom: 25px;
+  color: #0f172a;
+}
+
+.next-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.next-grid div {
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.next-grid span {
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.next-grid h3 {
+  margin: 8px 0;
+  color: #0f172a;
+  font-size: 16px;
+}
+
+.next-grid p {
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* Buttons */
+
+.result-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.primary-result-btn,
+.secondary-result-btn {
+  border: none;
+  padding: 14px 25px;
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.primary-result-btn {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.primary-result-btn:hover {
+  background: #1d4ed8;
+}
+
+.secondary-result-btn {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.secondary-result-btn:hover {
+  background: #cbd5e1;
+}
+
+/* Responsive */
+
+@media (max-width: 1000px) {
+  .score-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .next-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .assessment-result-page {
+    padding: 25px 5%;
+  }
+
+  .overall-result {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .next-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .result-actions {
+    flex-direction: column;
+  }
+
+  .primary-result-btn,
+  .secondary-result-btn {
+    width: 100%;
+  }
+}

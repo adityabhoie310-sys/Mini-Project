@@ -1,0 +1,5 @@
+/* Styles for login component/page */
+.login-container { width: 100%; max-width: 1200px; margin: 0 auto; }
+.login-header { margin-bottom: 2rem; }
+.login-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+

@@ -1,0 +1,30 @@
+{
+  "name": "ai-skill-gap-detector",
+  "version": "1.0.0",
+  "description": "AI-Powered Skill Gap Detector and Career Roadmap Generator",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "install:all": "npm install && npm install --prefix frontend && npm install --prefix backend",
+    "build:frontend": "npm run build --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "ai",
+    "skill-gap",
+    "career",
+    "assessment",
+    "react",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC"
+}

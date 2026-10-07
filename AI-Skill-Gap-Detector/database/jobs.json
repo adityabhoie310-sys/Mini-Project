@@ -1,0 +1,6 @@
+[
+      {"id": 1, "title": "Full Stack Engineer", "department": "Engineering", "experience": "Entry to Mid"},
+      {"id": 2, "title": "Frontend Specialist", "department": "UI/UX", "experience": "Mid"},
+      {"id": 3, "title": "Backend / Cloud Developer", "department": "Infrastructure", "experience": "Mid to Senior"},
+      {"id": 4, "title": "AI / ML Engineer", "department": "Data Science", "experience": "Mid"}
+    ]
