@@ -1,5 +1,5 @@
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-export const AI_SERVICE_URL = import.meta.env.VITE_AI_SERVICE_URL || 'http://localhost:8000';
+export const API_BASE_URL = 'http://localhost:5000/api';
+export const AI_SERVICE_URL = import.meta.env.VITE_AI_SERVICE_URL || 'http://127.0.0.1:8001';
 
 export const ASSESSMENT_TYPES = {
   TECHNICAL: 'technical',

@@ -6,6 +6,7 @@ import "../../styles/assessment.css";
 function Assessment() {
   const navigate = useNavigate();
 
+
   const selectedJob = JSON.parse(
     localStorage.getItem("selectedJob")
   );
@@ -13,18 +14,17 @@ function Assessment() {
   const sections = [
     {
       id: 1,
-      title: "Technical Skills",
+      title: "Technical Coding Skills",
       icon: "💻",
-      questions: 50,
-      duration: "45 Minutes",
+      questions: "3 challenges",
+      duration: "30 Minutes",
       description:
-        "Test your programming, web development, database, Git & GitHub, and job-specific technical skills.",
+        "Solve live JavaScript coding challenges and validate each solution against test cases.",
       topics: [
-        "Programming",
-        "Web Development",
-        "Database",
-        "Git & GitHub",
-        "Job-specific Skills",
+        "JavaScript Functions",
+        "Arrays & Strings",
+        "Problem Solving",
+        "Local Test Cases",
       ],
     },
     {
@@ -93,15 +93,15 @@ function Assessment() {
           <h2>Complete Your Assessment</h2>
 
           <p>
-            This assessment contains 100 questions divided into three
-            sections. Your results will be used to identify skill gaps
+            This assessment contains three live coding challenges and 50
+            reasoning and aptitude questions. Your results will identify skill gaps
             and generate your personalized AI career roadmap.
           </p>
         </div>
 
         <div className="assessment-total">
-          <strong>100</strong>
-          <span>Total Questions</span>
+          <strong>53</strong>
+          <span>Total Exercises</span>
         </div>
       </section>
 
@@ -204,7 +204,7 @@ function Assessment() {
 
           <p>
             Start with the Technical Skills assessment.
-            You will answer 50 questions.
+            You will start with three live coding challenges.
           </p>
         </div>
 

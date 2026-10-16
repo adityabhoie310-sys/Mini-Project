@@ -1,10 +1,48 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const RoadmapItemSchema = new mongoose.Schema({
-  name: { type: String },
-  title: { type: String },
-  data: { type: mongoose.Schema.Types.Mixed },
-  createdAt: { type: Date, default: Date.now }
-}, { timestamps: true });
+const roadmapItemSchema = new mongoose.Schema(
+  {
+    roadmap: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Roadmap",
+      required: true,
+    },
 
-module.exports = mongoose.model('RoadmapItem', RoadmapItemSchema);
+    week: {
+      type: Number,
+      required: true,
+    },
+
+    title: {
+      type: String,
+      required: true,
+    },
+
+    skills: [String],
+
+    topics: [String],
+
+    resources: [
+      {
+        name: String,
+        type: String,
+        link: String,
+      },
+    ],
+
+    project: {
+      type: String,
+      default: "",
+    },
+
+    completed: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+module.exports = mongoose.model("RoadmapItem", roadmapItemSchema);

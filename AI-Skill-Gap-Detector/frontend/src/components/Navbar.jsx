@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/navbar.css";
 
+import { useTheme } from "../context/ThemeContext";
+
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const { isDark, toggleTheme } = useTheme();
 
   const navigate = useNavigate();
 
@@ -75,6 +78,14 @@ function Navbar() {
 
         {/* Right Side */}
         <div className="navbar-right">
+          <button 
+            className="theme-toggle-btn" 
+            onClick={toggleTheme} 
+            title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            style={{ fontSize: "1.1rem", marginRight: "0.5rem" }}
+          >
+            {isDark ? "☀️" : "🌙"}
+          </button>
 
           {/* Profile */}
           <div className="profile-wrapper">

@@ -1,7 +1,19 @@
 [
-      {"id": 1, "name": "React", "category": "Frontend"},
-      {"id": 2, "name": "Node.js", "category": "Backend"},
-      {"id": 3, "name": "System Design", "category": "Architecture"},
-      {"id": 4, "name": "PostgreSQL", "category": "Database"},
-      {"id": 5, "name": "Docker", "category": "DevOps"}
-    ]
+  {"id": 1, "name": "HTML", "category": "Frontend"},
+  {"id": 2, "name": "CSS", "category": "Frontend"},
+  {"id": 3, "name": "JavaScript", "category": "Frontend"},
+  {"id": 4, "name": "React", "category": "Frontend"},
+  {"id": 5, "name": "Node.js", "category": "Backend"},
+  {"id": 6, "name": "Express.js", "category": "Backend"},
+  {"id": 7, "name": "MongoDB", "category": "Database"},
+  {"id": 8, "name": "REST API", "category": "Backend"},
+  {"id": 9, "name": "Git", "category": "Tools"},
+  {"id": 10, "name": "Python", "category": "Data Science"},
+  {"id": 11, "name": "SQL", "category": "Database"},
+  {"id": 12, "name": "Machine Learning", "category": "AI/ML"},
+  {"id": 13, "name": "Data Visualization", "category": "Data Science"},
+  {"id": 14, "name": "Pandas", "category": "Data Science"},
+  {"id": 15, "name": "NumPy", "category": "Data Science"},
+  {"id": 16, "name": "Scikit-learn", "category": "AI/ML"},
+  {"id": 17, "name": "Excel", "category": "Analytics"}
+]

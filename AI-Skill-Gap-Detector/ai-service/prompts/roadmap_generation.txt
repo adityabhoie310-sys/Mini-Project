@@ -1,1 +1,0 @@
-Generate a prioritized weekly study and project roadmap addressing the candidate's detected skill gaps.

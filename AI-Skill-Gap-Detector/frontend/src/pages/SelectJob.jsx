@@ -1,119 +1,164 @@
 
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getJobs } from "../services/jobService";
 import "../styles/selectJob.css";
 
-const jobs = [
+const fallbackJobs = [
   {
     id: 1,
-    title: "MERN Developer",
-    icon: "🌐",
-    description: "Build full-stack web applications using MongoDB, Express, React and Node.js.",
-    skills: ["JavaScript", "React", "Node.js", "MongoDB"],
+    title: "Full Stack Engineer",
+    icon: "💻",
+    description: "Build frontend and backend applications.",
+    skills: ["React", "Node.js", "Express", "MongoDB"],
   },
   {
     id: 2,
-    title: "Frontend Developer",
-    icon: "🎨",
-    description: "Create responsive and interactive user interfaces for web applications.",
-    skills: ["HTML", "CSS", "JavaScript", "React"],
-  },
-  {
-    id: 3,
-    title: "Backend Developer",
-    icon: "⚙️",
-    description: "Develop APIs, servers, databases and backend systems.",
-    skills: ["Node.js", "Express", "MongoDB", "REST API"],
-  },
-  {
-    id: 4,
     title: "Data Analyst",
     icon: "📊",
-    description: "Analyze data and generate useful business insights.",
+    description: "Analyze data and generate useful insights.",
     skills: ["Python", "SQL", "Excel", "Power BI"],
   },
   {
-    id: 5,
+    id: 3,
     title: "Machine Learning Engineer",
     icon: "🤖",
-    description: "Build and deploy machine learning models and intelligent systems.",
+    description: "Build and deploy machine learning models.",
     skills: ["Python", "NumPy", "Pandas", "Scikit-learn"],
   },
   {
-    id: 6,
+    id: 4,
     title: "AI Engineer",
     icon: "🧠",
-    description: "Build AI-powered applications using machine learning and generative AI.",
-    skills: ["Python", "AI", "ML", "LLM"],
+    description: "Build AI-powered applications.",
+    skills: ["Python", "AI", "ML", "LLMs"],
   },
 ];
 
 const SelectJob = () => {
   const navigate = useNavigate();
+
+  const [jobs, setJobs] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+
+    const loadJobs = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await getJobs();
+        const data = response.data;
+
+        // Supports an array or an API response shaped as { value: [...] }
+        const jobList = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.value)
+            ? data.value
+            : Array.isArray(data?.jobs)
+              ? data.jobs
+              : [];
+
+        if (active) {
+          setJobs(jobList);
+          if (jobList.length === 0) {
+            setError("No jobs were returned by the server.");
+          }
+        }
+      } catch (err) {
+        if (active) {
+          setError(
+            "Unable to load jobs. Check that your backend is running on port 5000."
+          );
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    loadJobs();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleContinue = () => {
     if (!selectedJob) return;
 
     localStorage.setItem("selectedJob", JSON.stringify(selectedJob));
-
     navigate("/assessment");
   };
 
   return (
     <div className="select-job-page">
-
-      {/* Main */}
       <main className="select-job-container">
-
         <div className="select-job-heading">
           <span>STEP 1 OF 3</span>
-
           <h1>Choose Your Target Job</h1>
-
           <p>
             Select the job role you want to prepare for.
-            Your assessment and personalized roadmap will
-            be based on your choice.
+            Your assessment and personalized roadmap will be based on your choice.
           </p>
         </div>
 
-        {/* Job Cards */}
-        <div className="job-grid">
+        {loading && <p>Loading job roles...</p>}
 
-          {jobs.map((job) => (
-            <button
-              key={job.id}
-              className={`job-card ${
-                selectedJob?.id === job.id ? "selected" : ""
-              }`}
-              onClick={() => setSelectedJob(job)}
-            >
-              <div className="job-card-top">
-                <div className="job-icon">{job.icon}</div>
+        {!loading && error && (
+          <p role="alert">{error}</p>
+        )}
 
-                {selectedJob?.id === job.id && (
-                  <div className="selected-check">✓</div>
-                )}
-              </div>
+        {!loading && jobs.length > 0 && (
+          <div className="job-grid">
+            {jobs.map((job, index) => {
+              const jobId = job.id ?? job._id ?? job.jobId ?? index;
+              const isSelected =
+                String(selectedJob?.id ?? selectedJob?._id ?? selectedJob?.jobId) ===
+                String(jobId);
 
-              <h2>{job.title}</h2>
+              const skills = Array.isArray(job.skills) ? job.skills : [];
 
-              <p>{job.description}</p>
+              return (
+                <button
+                  type="button"
+                  key={jobId}
+                  className={`job-card ${isSelected ? "selected" : ""}`}
+                  onClick={() =>
+                    setSelectedJob({ ...job, id: jobId })
+                  }
+                >
+                  <div className="job-card-top">
+                    <div className="job-icon">💼</div>
+                    {isSelected && (
+                      <div className="selected-check">✓</div>
+                    )}
+                  </div>
 
-              <div className="job-skills">
-                {job.skills.map((skill) => (
-                  <span key={skill}>{skill}</span>
-                ))}
-              </div>
-            </button>
-          ))}
+                  <h2>{job.title ?? job.name ?? "Untitled job"}</h2>
+                  <p>
+                    {job.description ?? "Explore the skills required for this role."}
+                  </p>
 
-        </div>
+                  <div className="job-skills">
+                    {skills.map((skill, skillIndex) => (
+                      <span key={`${skill}-${skillIndex}`}>
+                        {typeof skill === "string"
+                          ? skill
+                          : skill.name ?? skill.title ?? ""}
+                      </span>
+                    ))}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
-        {/* Continue */}
         <div className="continue-section">
-
           {selectedJob && (
             <p>
               Selected: <strong>{selectedJob.title}</strong>
@@ -121,17 +166,15 @@ const SelectJob = () => {
           )}
 
           <button
+            type="button"
             className="continue-button"
             onClick={handleContinue}
-            disabled={!selectedJob}
+            disabled={!selectedJob || loading}
           >
             Continue to Assessment →
           </button>
-
         </div>
-
       </main>
-
     </div>
   );
 };

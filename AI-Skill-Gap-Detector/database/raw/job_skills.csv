@@ -1,0 +1,32 @@
+jobId,jobTitle,skill
+JOB001,Frontend Developer,HTML
+JOB001,Frontend Developer,CSS
+JOB001,Frontend Developer,JavaScript
+JOB001,Frontend Developer,React
+JOB001,Frontend Developer,Git
+JOB002,Backend Developer,Python
+JOB002,Backend Developer,Node.js
+JOB002,Backend Developer,Express.js
+JOB002,Backend Developer,MongoDB
+JOB002,Backend Developer,REST API
+JOB002,Backend Developer,Git
+JOB003,MERN Stack Developer,HTML
+JOB003,MERN Stack Developer,CSS
+JOB003,MERN Stack Developer,JavaScript
+JOB003,MERN Stack Developer,React
+JOB003,MERN Stack Developer,Node.js
+JOB003,MERN Stack Developer,Express.js
+JOB003,MERN Stack Developer,MongoDB
+JOB003,MERN Stack Developer,REST API
+JOB003,MERN Stack Developer,Git
+JOB004,Data Analyst,Python
+JOB004,Data Analyst,SQL
+JOB004,Data Analyst,Excel
+JOB004,Data Analyst,Pandas
+JOB004,Data Analyst,NumPy
+JOB004,Data Analyst,Data Visualization
+JOB005,Machine Learning Engineer,Python
+JOB005,Machine Learning Engineer,NumPy
+JOB005,Machine Learning Engineer,Pandas
+JOB005,Machine Learning Engineer,Scikit-learn
+JOB005,Machine Learning Engineer,Machine Learning

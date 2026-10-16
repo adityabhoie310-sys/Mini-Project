@@ -1,0 +1,6 @@
+id,question,options,answer
+1,What is 15% of 200?,"['20', '30', '40', '50']",30
+2,"If 5x = 45, what is x?","['5', '7', '9', '10']",9
+3,"Find the average of 10, 20 and 30.","['15', '20', '25', '30']",20
+4,A product costs 500 and has a 10% discount. What is its price?,"['400', '450', '475', '490']",450
+5,What is 12 squared?,"['124', '144', '122', '132']",144

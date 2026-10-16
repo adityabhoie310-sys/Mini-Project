@@ -1,1 +1,0 @@
-Evaluate the user's technical answer against the standard criteria. Output score (0-100), key strengths, and missing concepts.

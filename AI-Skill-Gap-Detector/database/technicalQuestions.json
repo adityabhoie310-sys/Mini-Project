@@ -1,4 +1,23 @@
 [
-      {"id": 1, "skill": "React", "prompt": "What is the role of virtual DOM in React reconciliation?", "options": ["Minimizes expensive real DOM operations by diffing trees", "Compiles JavaScript to native assembly", "Handles SQL queries on client side", "Encrypts local storage items"], "answer": 0},
-      {"id": 2, "skill": "Database", "prompt": "What does ACID stand for in databases?", "options": ["Atomicity, Consistency, Isolation, Durability", "Action, Clarity, Interface, Delivery", "Asynchronous, Cached, Indexed, Distributed", "Authentication, Cryptography, Integrity, Decryption"], "answer": 0}
-    ]
+  {
+    "id": "c++_1792156833598",
+    "language": "C++",
+    "topic": "Algorithms & Recursion",
+    "title": "Implement Binary Search in C++",
+    "description": "Explain what the candidate needs to code and expected behavior",
+    "type": "coding",
+    "starterCode": "// Write your code here\n",
+    "codeSnippet": "",
+    "testCases": [
+      {
+        "name": "Test Case #1",
+        "expected": "Target found at index 3"
+      }
+    ],
+    "options": [],
+    "answer": "",
+    "explanation": "Admin custom question",
+    "createdBy": "admin",
+    "createdAt": "2026-10-16T13:20:33.598Z"
+  }
+]

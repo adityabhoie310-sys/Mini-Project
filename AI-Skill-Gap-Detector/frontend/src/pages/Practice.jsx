@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import "../styles/practice.css";
 
 function Practice() {
@@ -63,8 +62,6 @@ function Practice() {
 
   return (
     <div className="practice-page">
-      <Navbar />
-
       <main className="practice-container">
 
         {/* Header */}

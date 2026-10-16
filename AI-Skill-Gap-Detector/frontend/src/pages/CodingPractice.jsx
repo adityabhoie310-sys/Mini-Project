@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Navbar from "../components/Navbar";
 import "../styles/codingPractice.css";
 
 function CodingPractice() {
@@ -12,11 +11,14 @@ function CodingPractice() {
       description:
         "Write a function that takes a string and returns the string reversed.",
       exampleInput: '"hello"',
-      exampleOutput: '"olleh"',
       starterCode: `function reverseString(str) {
   // Write your code here
-
+  return str.split('').reverse().join('');
 }`,
+      testCases: [
+        { input: ["hello"], expected: "olleh" },
+        { input: ["react"], expected: "tcaer" }
+      ]
     },
 
     {
@@ -30,8 +32,12 @@ function CodingPractice() {
       exampleOutput: "25",
       starterCode: `function findMaximum(numbers) {
   // Write your code here
-
+  return Math.max(...numbers);
 }`,
+      testCases: [
+        { input: [[10, 5, 25, 8]], expected: 25 },
+        { input: [[-1, -5, -3]], expected: -1 }
+      ]
     },
 
     {
@@ -45,8 +51,12 @@ function CodingPractice() {
       exampleOutput: "true",
       starterCode: `function isPalindrome(str) {
   // Write your code here
-
+  return str === str.split('').reverse().join('');
 }`,
+      testCases: [
+        { input: ["madam"], expected: true },
+        { input: ["coding"], expected: false }
+      ]
     },
 
     {
@@ -60,8 +70,12 @@ function CodingPractice() {
       exampleOutput: "3",
       starterCode: `function countVowels(str) {
   // Write your code here
-
+  return (str.match(/[aeiou]/gi) || []).length;
 }`,
+      testCases: [
+        { input: ["javascript"], expected: 3 },
+        { input: ["sky"], expected: 0 }
+      ]
     },
 
     {
@@ -75,8 +89,12 @@ function CodingPractice() {
       exampleOutput: "[1, 2, 3]",
       starterCode: `function removeDuplicates(arr) {
   // Write your code here
-
+  return [...new Set(arr)];
 }`,
+      testCases: [
+        { input: [[1, 2, 2, 3, 1]], expected: [1, 2, 3] },
+        { input: [[4, 4, 4]], expected: [4] }
+      ]
     },
 
     {
@@ -90,37 +108,75 @@ function CodingPractice() {
       exampleOutput: "[0, 1]",
       starterCode: `function twoSum(numbers, target) {
   // Write your code here
-
+  for (let i = 0; i < numbers.length; i++) {
+    for (let j = i + 1; j < numbers.length; j++) {
+      if (numbers[i] + numbers[j] === target) return [i, j];
+    }
+  }
 }`,
+      testCases: [
+        { input: [[2, 7, 11, 15], 9], expected: [0, 1] },
+        { input: [[3, 2, 4], 6], expected: [1, 2] }
+      ]
     },
   ];
 
   const [selectedProblem, setSelectedProblem] = useState(problems[0]);
   const [code, setCode] = useState(problems[0].starterCode);
   const [language, setLanguage] = useState("javascript");
-  const [result, setResult] = useState("");
+  const [testResults, setTestResults] = useState(null);
 
   const selectProblem = (problem) => {
     setSelectedProblem(problem);
     setCode(problem.starterCode);
-    setResult("");
+    setTestResults(null);
   };
 
   const handleRun = () => {
-    setResult(
-      "Code submitted successfully. In the backend version, your code will be executed and evaluated against test cases."
-    );
+    try {
+      // Safe in-browser sandbox runner
+      // eslint-disable-next-line no-new-func
+      const runner = new Function(`
+        ${code}
+        const funcName = "${selectedProblem.starterCode.match(/function\s+([a-zA-Z0-9_]+)/)?.[1]}";
+        return eval(funcName);
+      `)();
+
+      const results = selectedProblem.testCases.map((tc, idx) => {
+        try {
+          const actual = runner(...tc.input);
+          const passed = JSON.stringify(actual) === JSON.stringify(tc.expected);
+          return {
+            id: idx + 1,
+            input: JSON.stringify(tc.input),
+            expected: JSON.stringify(tc.expected),
+            actual: JSON.stringify(actual),
+            passed
+          };
+        } catch (err) {
+          return {
+            id: idx + 1,
+            input: JSON.stringify(tc.input),
+            expected: JSON.stringify(tc.expected),
+            actual: `Error: ${err.message}`,
+            passed: false
+          };
+        }
+      });
+
+      setTestResults(results);
+    } catch (err) {
+      setTestResults([{ id: 1, passed: false, actual: `Syntax Error: ${err.message}` }]);
+    }
   };
 
   const handleReset = () => {
     setCode(selectedProblem.starterCode);
-    setResult("");
+    setTestResults(null);
   };
 
   return (
     <div className="coding-page">
-      <Navbar />
-
       <main className="coding-container">
 
         {/* Header */}
@@ -271,11 +327,45 @@ function CodingPractice() {
 
             </div>
 
-            {/* Result */}
-            {result && (
-              <div className="code-result">
-                <strong>Submission Result</strong>
-                <p>{result}</p>
+            {/* Test Results */}
+            {testResults && (
+              <div className="code-result" style={{ marginTop: '1.5rem', background: 'var(--surface)', padding: '1.25rem', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <strong style={{ fontSize: '1rem', color: 'var(--text-main)' }}>Live Execution & Test Suite</strong>
+                  <span style={{ 
+                    padding: '0.25rem 0.75rem', 
+                    borderRadius: '999px', 
+                    fontSize: '0.85rem', 
+                    fontWeight: 600,
+                    background: testResults.every(r => r.passed) ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                    color: testResults.every(r => r.passed) ? '#10b981' : '#ef4444'
+                  }}>
+                    {testResults.filter(r => r.passed).length} / {testResults.length} Passed
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {testResults.map((tr) => (
+                    <div key={tr.id} style={{ 
+                      padding: '0.75rem', 
+                      borderRadius: '6px', 
+                      background: 'var(--background)',
+                      borderLeft: `4px solid ${tr.passed ? '#10b981' : '#ef4444'}`
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                        <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>Test Case #{tr.id}</span>
+                        <span style={{ color: tr.passed ? '#10b981' : '#ef4444', fontWeight: 600, fontSize: '0.85rem' }}>
+                          {tr.passed ? '✓ PASSED' : '✗ FAILED'}
+                        </span>
+                      </div>
+                      {tr.input && <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Input: <code>{tr.input}</code></div>}
+                      {tr.expected && <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Expected: <code>{tr.expected}</code></div>}
+                      <div style={{ fontSize: '0.8rem', color: tr.passed ? 'var(--text-main)' : '#ef4444' }}>
+                        Actual: <code>{tr.actual}</code>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 

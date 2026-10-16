@@ -1,10 +1,52 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const ResourceSchema = new mongoose.Schema({
-  name: { type: String },
-  title: { type: String },
-  data: { type: mongoose.Schema.Types.Mixed },
-  createdAt: { type: Date, default: Date.now }
-}, { timestamps: true });
+const resourceSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
 
-module.exports = mongoose.model('Resource', ResourceSchema);
+    skill: {
+      type: String,
+      required: true,
+    },
+
+    type: {
+      type: String,
+      enum: [
+        "Video",
+        "Documentation",
+        "Practice",
+        "Course",
+        "Article",
+      ],
+      default: "Video",
+    },
+
+    platform: {
+      type: String,
+      default: "",
+    },
+
+    description: {
+      type: String,
+      default: "",
+    },
+
+    link: {
+      type: String,
+      required: true,
+    },
+
+    recommendedByAI: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+module.exports = mongoose.model("Resource", resourceSchema);

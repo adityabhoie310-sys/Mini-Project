@@ -1,5 +1,4 @@
 import React from "react";
-import Navbar from "../components/Navbar";
 import "../styles/progress.css";
 
 function Progress() {
@@ -15,8 +14,6 @@ function Progress() {
 
   return (
     <div className="progress-page">
-      <Navbar />
-
       <main className="progress-container">
 
         {/* Header */}

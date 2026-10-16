@@ -228,11 +228,33 @@ const questions = [
 function ReasoningAssessment() {
   const navigate = useNavigate();
 
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [timeLeft, setTimeLeft] = useState(25 * 60);
+  const [currentQuestion, setCurrentQuestion] = useState(() => {
+    return parseInt(localStorage.getItem("reasoning_assessment_curr_idx") || "0", 10);
+  });
+  const [answers, setAnswers] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("reasoningAssessmentAnswers") || "{}");
+    } catch {
+      return {};
+    }
+  });
+  const [timeLeft, setTimeLeft] = useState(() => {
+    return parseInt(localStorage.getItem("reasoning_assessment_time_left") || String(25 * 60), 10);
+  });
 
   const question = questions[currentQuestion];
+
+  useEffect(() => {
+    localStorage.setItem("reasoningAssessmentAnswers", JSON.stringify(answers));
+  }, [answers]);
+
+  useEffect(() => {
+    localStorage.setItem("reasoning_assessment_curr_idx", String(currentQuestion));
+  }, [currentQuestion]);
+
+  useEffect(() => {
+    localStorage.setItem("reasoning_assessment_time_left", String(timeLeft));
+  }, [timeLeft]);
 
   useEffect(() => {
     if (timeLeft <= 0) {

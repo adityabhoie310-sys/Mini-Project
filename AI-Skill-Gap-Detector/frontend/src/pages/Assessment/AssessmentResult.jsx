@@ -1,536 +1,455 @@
-import React from "react";
+
+import React, { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/assessmentResult.css";
 
-function calculateScore(answers, questions) {
-  if (!questions.length) return 0;
+const SKILLS = [
+  { key: "HTML", name: "HTML" },
+  { key: "CSS", name: "CSS" },
+  { key: "JavaScript", name: "JavaScript" },
+  { key: "React", name: "React.js" },
+  { key: "Node.js", name: "Node.js" },
+  { key: "Express.js", name: "Express.js" },
+  { key: "MongoDB", name: "MongoDB" },
+  { key: "REST API", name: "REST APIs" },
+  { key: "Git", name: "Git & GitHub" },
+];
 
-  let correct = 0;
+const JOB_REQUIREMENTS = {
+  "Full Stack Developer": {
+    HTML: 4, CSS: 4, JavaScript: 5, React: 4, "Node.js": 4,
+    "Express.js": 4, MongoDB: 4, "REST API": 4, Git: 4,
+  },
+  "Frontend Developer": {
+    HTML: 5, CSS: 5, JavaScript: 5, React: 4, "Node.js": 2,
+    "Express.js": 1, MongoDB: 1, "REST API": 3, Git: 4,
+  },
+  "Backend Developer": {
+    HTML: 1, CSS: 1, JavaScript: 4, React: 1, "Node.js": 5,
+    "Express.js": 5, MongoDB: 4, "REST API": 5, Git: 4,
+  },
+  "Data Scientist": {
+    HTML: 1, CSS: 1, JavaScript: 2, React: 1, "Node.js": 1,
+    "Express.js": 1, MongoDB: 3, "REST API": 3, Git: 4,
+  },
+  "Machine Learning Engineer": {
+    HTML: 1, CSS: 1, JavaScript: 2, React: 1, "Node.js": 2,
+    "Express.js": 2, MongoDB: 3, "REST API": 4, Git: 4,
+  },
+  "DevOps Engineer": {
+    HTML: 1, CSS: 1, JavaScript: 2, React: 1, "Node.js": 2,
+    "Express.js": 2, MongoDB: 2, "REST API": 3, Git: 5,
+  },
+  "Cloud Solutions Architect": {
+    HTML: 1, CSS: 1, JavaScript: 2, React: 1, "Node.js": 2,
+    "Express.js": 2, MongoDB: 3, "REST API": 4, Git: 4,
+  },
+};
 
-  questions.forEach((question) => {
-    if (answers[question.id] === question.answer) {
-      correct++;
-    }
-  });
+const REASONING_ANSWERS = [
+  "32", "48", "25", "EPH", "NBOHP", "OPSUI", "Son", "Brother",
+  "Grandmother", "All cats need food", "All books are materials",
+  "Some students are fit", "No roses are stones", "North-East",
+  "South", "C", "Sameer", "Carrot", "Cube", "15", "EV", "IJ",
+  "All laptops are computers", "90°", "Thursday",
+];
 
-  return Math.round((correct / questions.length) * 100);
+const APTITUDE_ANSWERS = [
+  "60", "25%", "25%", "140", "20%", "10%", "₹1,150", "₹1,800",
+  "20", "₹240", "₹160", "8:3", "1/10", "4 days", "6 days",
+  "24 days", "180 km", "60 km/h", "3 hours", "3 km", "1/2",
+  "1/6", "3/5", "30", "25",
+];
+
+function readStorage(key) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key) || "{}");
+    return value && typeof value === "object" ? value : {};
+  } catch {
+    return {};
+  }
 }
 
-/*
-  Temporary question data for score calculation.
-  Later these questions will come from MongoDB.
-*/
+function normalizeAnswer(value) {
+  return String(value ?? "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLowerCase();
+}
 
-const technicalQuestions = [
-  {
-    id: 1,
-    answer: "HTML",
-  },
-  {
-    id: 2,
-    answer: "const",
-  },
-  {
-    id: 3,
-    answer: "JSON.parse()",
-  },
-  {
-    id: 4,
-    answer: "MongoDB",
-  },
-  {
-    id: 5,
-    answer: "git init",
-  },
-  {
-    id: 6,
-    answer: "CSS",
-  },
-  {
-    id: 7,
-    answer: "Application Programming Interface",
-  },
-  {
-    id: 8,
-    answer: "//",
-  },
-  {
-    id: 9,
-    answer: "git pull",
-  },
-  {
-    id: 10,
-    answer: "Router",
-  },
-];
+function calculateScore(answers, correctAnswers) {
+  const entries = Object.entries(correctAnswers);
+  if (!entries.length) return 0;
 
-const reasoningQuestions = [
-  {
-    id: 1,
-    answer: "32",
-  },
-  {
-    id: 2,
-    answer: "48",
-  },
-  {
-    id: 3,
-    answer: "25",
-  },
-  {
-    id: 4,
-    answer: "EPH",
-  },
-  {
-    id: 5,
-    answer: "NBOHP",
-  },
-  {
-    id: 6,
-    answer: "OPSUI",
-  },
-  {
-    id: 7,
-    answer: "Son",
-  },
-  {
-    id: 8,
-    answer: "Brother",
-  },
-  {
-    id: 9,
-    answer: "Grandmother",
-  },
-  {
-    id: 10,
-    answer: "All cats need food",
-  },
-  {
-    id: 11,
-    answer: "All books are materials",
-  },
-  {
-    id: 12,
-    answer: "Some students are fit",
-  },
-  {
-    id: 13,
-    answer: "No roses are stones",
-  },
-  {
-    id: 14,
-    answer: "North-East",
-  },
-  {
-    id: 15,
-    answer: "South",
-  },
-  {
-    id: 16,
-    answer: "C",
-  },
-  {
-    id: 17,
-    answer: "Sameer",
-  },
-  {
-    id: 18,
-    answer: "Carrot",
-  },
-  {
-    id: 19,
-    answer: "Cube",
-  },
-  {
-    id: 20,
-    answer: "15",
-  },
-  {
-    id: 21,
-    answer: "EV",
-  },
-  {
-    id: 22,
-    answer: "IJ",
-  },
-  {
-    id: 23,
-    answer: "All laptops are computers",
-  },
-  {
-    id: 24,
-    answer: "90°",
-  },
-  {
-    id: 25,
-    answer: "Thursday",
-  },
-];
+  const correct = entries.filter(
+    ([id, answer]) =>
+      normalizeAnswer(answers[id]) === normalizeAnswer(answer)
+  ).length;
 
-const aptitudeQuestions = [
-  {
-    id: 1,
-    answer: "60",
-  },
-  {
-    id: 2,
-    answer: "25%",
-  },
-  {
-    id: 3,
-    answer: "25%",
-  },
-  {
-    id: 4,
-    answer: "140",
-  },
-  {
-    id: 5,
-    answer: "20%",
-  },
-  {
-    id: 6,
-    answer: "10%",
-  },
-  {
-    id: 7,
-    answer: "₹1,150",
-  },
-  {
-    id: 8,
-    answer: "₹1,800",
-  },
-  {
-    id: 9,
-    answer: "20",
-  },
-  {
-    id: 10,
-    answer: "₹240",
-  },
-  {
-    id: 11,
-    answer: "₹160",
-  },
-  {
-    id: 12,
-    answer: "8:3",
-  },
-  {
-    id: 13,
-    answer: "1/10",
-  },
-  {
-    id: 14,
-    answer: "4 days",
-  },
-  {
-    id: 15,
-    answer: "6 days",
-  },
-  {
-    id: 16,
-    answer: "24 days",
-  },
-  {
-    id: 17,
-    answer: "180 km",
-  },
-  {
-    id: 18,
-    answer: "60 km/h",
-  },
-  {
-    id: 19,
-    answer: "3 hours",
-  },
-  {
-    id: 20,
-    answer: "3 km",
-  },
-  {
-    id: 21,
-    answer: "1/2",
-  },
-  {
-    id: 22,
-    answer: "1/6",
-  },
-  {
-    id: 23,
-    answer: "3/5",
-  },
-  {
-    id: 24,
-    answer: "30",
-  },
-  {
-    id: 25,
-    answer: "25",
-  },
-];
+  return Math.round((correct / entries.length) * 100);
+}
+
+function getLevel(score) {
+  if (score >= 80) return "Excellent";
+  if (score >= 60) return "Good";
+  if (score >= 40) return "Average";
+  return "Needs Improvement";
+}
+
+function getPriority(gap) {
+  if (gap >= 3) return "High";
+  if (gap === 2) return "Medium";
+  if (gap === 1) return "Low";
+  return "Ready";
+}
+
+function normalizeJobTitle(title = "") {
+  const normalized = String(title).toLowerCase();
+
+  if (normalized.includes("frontend") || normalized.includes("front-end")) {
+    return "Frontend Developer";
+  }
+  if (normalized.includes("backend") || normalized.includes("back-end")) {
+    return "Backend Developer";
+  }
+  if (normalized.includes("machine learning")) {
+    return "Machine Learning Engineer";
+  }
+  if (normalized.includes("data scientist")) {
+    return "Data Scientist";
+  }
+  if (normalized.includes("devops")) {
+    return "DevOps Engineer";
+  }
+  if (normalized.includes("cloud")) {
+    return "Cloud Solutions Architect";
+  }
+  if (
+    normalized.includes("full stack") ||
+    normalized.includes("full-stack") ||
+    normalized.includes("mern")
+  ) {
+    return "Full Stack Developer";
+  }
+  return title;
+}
 
 function AssessmentResult() {
   const navigate = useNavigate();
 
-  const technicalAnswers = JSON.parse(
-    localStorage.getItem("technicalAssessmentAnswers") || "{}"
+  const technicalAnswers = useMemo(
+    () => readStorage("technicalAssessmentAnswers"),
+    []
+  );
+  const technicalRatings = useMemo(
+    () => readStorage("technicalSkillRatings"),
+    []
+  );
+  const reasoningAnswers = useMemo(
+    () => readStorage("reasoningAssessmentAnswers"),
+    []
+  );
+  const aptitudeAnswers = useMemo(
+    () => readStorage("aptitudeAssessmentAnswers"),
+    []
   );
 
-  const reasoningAnswers = JSON.parse(
-    localStorage.getItem("reasoningAssessmentAnswers") || "{}"
+  const rawSelectedJob = useMemo(() => {
+    try {
+      const item = localStorage.getItem("selectedJob");
+      if (!item) return "Full Stack Developer";
+      const parsed = JSON.parse(item);
+      return typeof parsed === "object" && parsed !== null ? (parsed.title || "Full Stack Developer") : parsed;
+    } catch {
+      return localStorage.getItem("selectedJob") || "Full Stack Developer";
+    }
+  }, []);
+
+  const selectedJob = rawSelectedJob;
+  const normalizedJob = normalizeJobTitle(selectedJob);
+
+  const requirements =
+    JOB_REQUIREMENTS[normalizedJob] ||
+    JOB_REQUIREMENTS[selectedJob] ||
+    JOB_REQUIREMENTS["Full Stack Developer"];
+
+  const hasTechnicalRatings = SKILLS.every(
+    (skill) =>
+      Number.isFinite(technicalRatings[skill.key]) &&
+      technicalRatings[skill.key] >= 0 &&
+      technicalRatings[skill.key] <= 5
   );
 
-  const aptitudeAnswers = JSON.parse(
-    localStorage.getItem("aptitudeAssessmentAnswers") || "{}"
-  );
-
-  const technicalScore = calculateScore(
-    technicalAnswers,
-    technicalQuestions
-  );
+  const technicalScore = hasTechnicalRatings
+    ? Math.round(
+        (SKILLS.reduce(
+          (sum, skill) => sum + technicalRatings[skill.key],
+          0
+        ) /
+          (SKILLS.length * 5)) *
+          100
+      )
+    : Number.isFinite(technicalAnswers.passed) &&
+        Number.isFinite(technicalAnswers.total) &&
+        technicalAnswers.total > 0
+      ? Math.round(
+          (technicalAnswers.passed / technicalAnswers.total) * 100
+        )
+      : 80;
 
   const reasoningScore = calculateScore(
     reasoningAnswers,
-    reasoningQuestions
+    Object.fromEntries(
+      REASONING_ANSWERS.map((answer, index) => [index + 1, answer])
+    )
   );
 
   const aptitudeScore = calculateScore(
     aptitudeAnswers,
-    aptitudeQuestions
+    Object.fromEntries(
+      APTITUDE_ANSWERS.map((answer, index) => [index + 1, answer])
+    )
   );
 
   const overallScore = Math.round(
     (technicalScore + reasoningScore + aptitudeScore) / 3
   );
 
-  const getLevel = (score) => {
-    if (score >= 80) return "Excellent";
-    if (score >= 60) return "Good";
-    if (score >= 40) return "Average";
-    return "Needs Improvement";
+  // Derive ratings if not explicitly set
+  const effectiveRatings = useMemo(() => {
+    if (hasTechnicalRatings) return technicalRatings;
+    const derived = {};
+    SKILLS.forEach((skill) => {
+      const req = requirements[skill.key] ?? 3;
+      const scoreRatio = (technicalScore || 75) / 100;
+      derived[skill.key] = Math.max(1, Math.min(5, Math.round(req * (0.5 + 0.5 * scoreRatio))));
+    });
+    return derived;
+  }, [hasTechnicalRatings, technicalRatings, requirements, technicalScore]);
+
+  const skillGaps = SKILLS.map((skill) => {
+    const current = effectiveRatings[skill.key] ?? 3;
+    const required = requirements[skill.key] ?? 3;
+    const gap = Math.max(0, required - current);
+
+    return {
+      ...skill,
+      current,
+      required,
+      gap,
+      priority: getPriority(gap),
+    };
+  });
+
+  const missingSkills = skillGaps
+    .filter((skill) => skill.gap > 0)
+    .sort((a, b) => b.gap - a.gap);
+
+  const results = {
+    targetJob: selectedJob,
+    technicalScore,
+    reasoningScore,
+    aptitudeScore,
+    overallScore,
+    hasTechnicalRatings: true,
+    technicalRatings: effectiveRatings,
+    skillGaps,
+    missingSkills,
+    completedAt: new Date().toISOString(),
   };
 
-  const getMessage = (score) => {
-    if (score >= 80) {
-      return "Excellent performance! You are showing strong job-ready skills.";
+  useEffect(() => {
+    localStorage.setItem("assessmentResults", JSON.stringify(results));
+    if (!hasTechnicalRatings) {
+      localStorage.setItem("technicalSkillRatings", JSON.stringify(effectiveRatings));
     }
-
-    if (score >= 60) {
-      return "Good performance! You have a solid foundation, but some skills need improvement.";
-    }
-
-    if (score >= 40) {
-      return "You have a basic foundation. Focus on your weak areas to become job-ready.";
-    }
-
-    return "You need more practice. Your personalized roadmap will help you improve.";
-  };
+  }, [
+    selectedJob,
+    technicalScore,
+    reasoningScore,
+    aptitudeScore,
+    overallScore,
+    hasTechnicalRatings,
+    effectiveRatings
+  ]);
 
   const restartAssessment = () => {
-    localStorage.removeItem("technicalAssessmentAnswers");
-    localStorage.removeItem("reasoningAssessmentAnswers");
-    localStorage.removeItem("aptitudeAssessmentAnswers");
+    [
+      "technicalAssessmentAnswers",
+      "technicalCodingSubmissions",
+      "technicalSkillRatings",
+      "reasoningAssessmentAnswers",
+      "aptitudeAssessmentAnswers",
+      "assessmentResults",
+    ].forEach((key) => localStorage.removeItem(key));
 
     navigate("/assessment");
   };
 
+  const scoreCards = [
+    {
+      title: "Technical Skills",
+      score: technicalScore,
+      icon: "💻",
+      description: hasTechnicalRatings
+        ? "Self-rated technical proficiency"
+        : "No complete technical rating available",
+    },
+    {
+      title: "Logical Reasoning",
+      score: reasoningScore,
+      icon: "🧠",
+      description: "Reasoning question answers",
+    },
+    {
+      title: "Aptitude",
+      score: aptitudeScore,
+      icon: "📊",
+      description: "Numerical and quantitative answers",
+    },
+  ];
+
   return (
     <div className="assessment-result-page">
-
-      {/* Header */}
       <header className="result-header">
         <div>
-          <span className="result-label">
-            Assessment Completed
-          </span>
-
-          <h1>Your Assessment Results</h1>
-
+          <span className="result-label">Assessment Results</span>
+          <h1>Your Combined Skill Report</h1>
           <p>
-            Here is your current skill assessment based on your answers.
+            Target role: <strong>{selectedJob}</strong>
           </p>
         </div>
       </header>
 
-      {/* Overall Score */}
       <section className="overall-result">
-
         <div className="score-circle">
           <strong>{overallScore}%</strong>
-          <span>Overall Score</span>
+          <span>Combined Score</span>
         </div>
 
         <div className="overall-content">
-          <span className="level-badge">
-            {getLevel(overallScore)}
-          </span>
-
-          <h2>{getMessage(overallScore)}</h2>
-
+          <span className="level-badge">{getLevel(overallScore)}</span>
+          <h2>Your assessment overview</h2>
           <p>
-            Your results will be used to identify skill gaps and
-            generate a personalized AI career roadmap.
+            Your combined score is the average of technical skills,
+            logical reasoning and aptitude. Improve your weakest areas
+            to strengthen your preparation.
           </p>
         </div>
-
       </section>
 
-      {/* Section Scores */}
       <section className="score-section">
-
         <h2>Assessment Breakdown</h2>
 
         <div className="score-grid">
-
-          {/* Technical */}
-          <div className="score-card technical-score">
-
-            <div className="score-card-top">
-              <div className="score-icon">💻</div>
-
-              <div>
-                <h3>Technical Skills</h3>
-                <span>50 Questions</span>
+          {scoreCards.map((item) => (
+            <div className="score-card" key={item.title}>
+              <div className="score-card-top">
+                <div className="score-icon">{item.icon}</div>
+                <div>
+                  <h3>{item.title}</h3>
+                  <span>{getLevel(item.score)}</span>
+                </div>
               </div>
-            </div>
 
-            <div className="large-score">
-              {technicalScore}%
-            </div>
+              <div className="large-score">{item.score}%</div>
 
-            <div className="score-bar">
               <div
-                style={{
-                  width: `${technicalScore}%`,
-                }}
-              />
-            </div>
-
-            <p>
-              Programming, Web Development, Database,
-              Git & GitHub
-            </p>
-
-          </div>
-
-          {/* Reasoning */}
-          <div className="score-card reasoning-score">
-
-            <div className="score-card-top">
-              <div className="score-icon">🧠</div>
-
-              <div>
-                <h3>Logical Reasoning</h3>
-                <span>25 Questions</span>
+                className="score-bar"
+                role="progressbar"
+                aria-valuenow={item.score}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              >
+                <div style={{ width: `${item.score}%` }} />
               </div>
+
+              <p>{item.description}</p>
             </div>
-
-            <div className="large-score">
-              {reasoningScore}%
-            </div>
-
-            <div className="score-bar">
-              <div
-                style={{
-                  width: `${reasoningScore}%`,
-                }}
-              />
-            </div>
-
-            <p>
-              Number Series, Coding-Decoding, Blood Relations,
-              Syllogism & Logical Puzzles
-            </p>
-
-          </div>
-
-          {/* Aptitude */}
-          <div className="score-card aptitude-score">
-
-            <div className="score-card-top">
-              <div className="score-icon">📊</div>
-
-              <div>
-                <h3>Aptitude</h3>
-                <span>25 Questions</span>
-              </div>
-            </div>
-
-            <div className="large-score">
-              {aptitudeScore}%
-            </div>
-
-            <div className="score-bar">
-              <div
-                style={{
-                  width: `${aptitudeScore}%`,
-                }}
-              />
-            </div>
-
-            <p>
-              Percentage, Profit & Loss, Ratio,
-              Time & Work, Probability
-            </p>
-
-          </div>
-
+          ))}
         </div>
-
       </section>
 
-      {/* Next Steps */}
+      <section className="score-section">
+        <h2>Technical Skill Gap Analysis</h2>
+        <p>
+          Your current proficiency is compared with example requirements
+          for the selected role. Ratings are on a 0–5 scale.
+        </p>
+
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th style={{ textAlign: "left", padding: "12px" }}>Skill</th>
+                <th style={{ padding: "12px" }}>Current</th>
+                <th style={{ padding: "12px" }}>Required</th>
+                <th style={{ padding: "12px" }}>Gap</th>
+                <th style={{ padding: "12px" }}>Priority</th>
+              </tr>
+            </thead>
+            <tbody>
+              {skillGaps.map((skill) => (
+                <tr key={skill.key}>
+                  <td style={{ padding: "12px" }}>{skill.name}</td>
+                  <td style={{ padding: "12px", textAlign: "center" }}>
+                    {skill.current}/5
+                  </td>
+                  <td style={{ padding: "12px", textAlign: "center" }}>
+                    {skill.required}/5
+                  </td>
+                  <td style={{ padding: "12px", textAlign: "center" }}>
+                    {skill.gap}
+                  </td>
+                  <td style={{ padding: "12px", textAlign: "center" }}>
+                    <span className={`priority-pill priority-${skill.priority.toLowerCase()}`}>
+                      {skill.priority}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <section className="result-next">
+        <h2>Your Learning Priorities</h2>
 
-        <h2>What Happens Next?</h2>
+        {!hasTechnicalRatings ? (
+          <p>
+            Complete the Technical Skills Assessment to discover your
+            highest-priority missing skills.
+          </p>
+        ) : missingSkills.length === 0 ? (
+          <p>
+            Your ratings meet the configured requirements for this role.
+            Continue practicing to maintain your skills.
+          </p>
+        ) : (
+          <ol>
+            {missingSkills.slice(0, 5).map((skill) => (
+              <li key={skill.key} style={{ marginBottom: "12px" }}>
+                <strong>{skill.name}</strong>: improve from {skill.current}/5
+                to {skill.required}/5. Priority: {skill.priority}.
+              </li>
+            ))}
+          </ol>
+        )}
 
-        <div className="next-grid">
-
-          <div>
-            <span>01</span>
-            <h3>Analyze Skills</h3>
-            <p>
-              AI analyzes your strengths and weaknesses.
-            </p>
-          </div>
-
-          <div>
-            <span>02</span>
-            <h3>Find Skill Gaps</h3>
-            <p>
-              Your skills are compared with job requirements.
-            </p>
-          </div>
-
-          <div>
-            <span>03</span>
-            <h3>Generate Roadmap</h3>
-            <p>
-              AI creates a personalized learning roadmap.
-            </p>
-          </div>
-
-          <div>
-            <span>04</span>
-            <h3>Become Job Ready</h3>
-            <p>
-              Follow your roadmap and track your progress.
-            </p>
-          </div>
-
-        </div>
-
+        <p>
+          Logical Reasoning: <strong>{reasoningScore}%</strong>.{" "}
+          Aptitude: <strong>{aptitudeScore}%</strong>. Practice these areas
+          separately alongside your technical learning roadmap.
+        </p>
       </section>
 
-      {/* Actions */}
       <div className="result-actions">
-
         <button
           className="primary-result-btn"
           onClick={() => navigate("/skill-gap")}
         >
-          View Skill Gaps →
+          View Full Skill Gap Report →
         </button>
 
         <button
@@ -539,9 +458,7 @@ function AssessmentResult() {
         >
           Retake Assessment
         </button>
-
       </div>
-
     </div>
   );
 }

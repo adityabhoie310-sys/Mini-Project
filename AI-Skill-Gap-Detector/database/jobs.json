@@ -1,6 +1,37 @@
 [
-      {"id": 1, "title": "Full Stack Engineer", "department": "Engineering", "experience": "Entry to Mid"},
-      {"id": 2, "title": "Frontend Specialist", "department": "UI/UX", "experience": "Mid"},
-      {"id": 3, "title": "Backend / Cloud Developer", "department": "Infrastructure", "experience": "Mid to Senior"},
-      {"id": 4, "title": "AI / ML Engineer", "department": "Data Science", "experience": "Mid"}
-    ]
+  {
+    "id": 1,
+    "jobId": "JOB001",
+    "title": "Frontend Developer",
+    "description": "Build high-performance, responsive user interfaces and modern web applications with React.",
+    "skills": ["HTML", "CSS", "JavaScript", "React", "Git"]
+  },
+  {
+    "id": 2,
+    "jobId": "JOB002",
+    "title": "Backend Developer",
+    "description": "Design and build scalable server-side systems, RESTful APIs, and databases.",
+    "skills": ["Python", "Node.js", "Express.js", "MongoDB", "REST API", "Git"]
+  },
+  {
+    "id": 3,
+    "jobId": "JOB003",
+    "title": "MERN Stack Developer",
+    "description": "Full stack development covering MongoDB, Express, React, and Node.js.",
+    "skills": ["HTML", "CSS", "JavaScript", "React", "Node.js", "Express.js", "MongoDB", "REST API", "Git"]
+  },
+  {
+    "id": 4,
+    "jobId": "JOB004",
+    "title": "Data Analyst",
+    "description": "Extract, analyze, and visualize complex datasets to derive actionable business insights.",
+    "skills": ["Python", "SQL", "Excel", "Pandas", "NumPy", "Data Visualization"]
+  },
+  {
+    "id": 5,
+    "jobId": "JOB005",
+    "title": "Machine Learning Engineer",
+    "description": "Build, evaluate, and deploy predictive machine learning models and pipelines.",
+    "skills": ["Python", "NumPy", "Pandas", "Scikit-learn", "Machine Learning"]
+  }
+]

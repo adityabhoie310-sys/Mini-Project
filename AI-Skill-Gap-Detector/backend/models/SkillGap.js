@@ -1,10 +1,52 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const SkillGapSchema = new mongoose.Schema({
-  name: { type: String },
-  title: { type: String },
-  data: { type: mongoose.Schema.Types.Mixed },
-  createdAt: { type: Date, default: Date.now }
-}, { timestamps: true });
+const skillGapSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
 
-module.exports = mongoose.model('SkillGap', SkillGapSchema);
+    jobRole: {
+      type: String,
+      required: true,
+    },
+
+    skill: {
+      type: String,
+      required: true,
+    },
+
+    currentLevel: {
+      type: Number,
+      required: true,
+    },
+
+    requiredLevel: {
+      type: Number,
+      required: true,
+    },
+
+    gap: {
+      type: Number,
+      required: true,
+    },
+
+    priority: {
+      type: String,
+      enum: ["Low", "Medium", "High"],
+      default: "Medium",
+    },
+
+    aiRecommendation: {
+      type: String,
+      default: "",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+module.exports = mongoose.model("SkillGap", skillGapSchema);

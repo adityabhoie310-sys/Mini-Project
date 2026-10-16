@@ -1,10 +1,55 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const AssessmentSchema = new mongoose.Schema({
-  name: { type: String },
-  title: { type: String },
-  data: { type: mongoose.Schema.Types.Mixed },
-  createdAt: { type: Date, default: Date.now }
-}, { timestamps: true });
+const assessmentSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
 
-module.exports = mongoose.model('Assessment', AssessmentSchema);
+    jobRole: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "JobRole",
+    },
+
+    technicalScore: {
+      type: Number,
+      default: 0,
+    },
+
+    reasoningScore: {
+      type: Number,
+      default: 0,
+    },
+
+    aptitudeScore: {
+      type: Number,
+      default: 0,
+    },
+
+    overallScore: {
+      type: Number,
+      default: 0,
+    },
+
+    totalQuestions: {
+      type: Number,
+      default: 100,
+    },
+
+    completed: {
+      type: Boolean,
+      default: false,
+    },
+
+    completedAt: {
+      type: Date,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+module.exports = mongoose.model("Assessment", assessmentSchema);

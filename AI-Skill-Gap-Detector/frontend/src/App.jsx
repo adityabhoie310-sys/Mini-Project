@@ -1,7 +1,8 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { UserProvider } from './context/UserContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 // Components
 import Navbar from './components/Navbar';
@@ -35,9 +36,9 @@ import Profile from './pages/Profile';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <UserProvider>
-        <Router>
+    <ThemeProvider>
+      <AuthProvider>
+        <UserProvider>
           <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             <Navbar />
             <div style={{ display: 'flex', flex: 1 }}>
@@ -49,14 +50,15 @@ export default function App() {
                   <Route path="/register" element={<Register />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/select-job" element={<SelectJob />} />
-
+         
                   {/* Assessments */}
                   <Route path="/assessment" element={<Assessment />} />
                   <Route path="/assessment/technical" element={<TechnicalAssessment />} />
                   <Route path="/assessment/reasoning" element={<ReasoningAssessment />} />
                   <Route path="/assessment/aptitude" element={<AptitudeAssessment />} />
                   <Route path="/assessment/result" element={<AssessmentResult />} />
-
+                  <Route path="/assessment/technical-rating" element={<TechnicalAssessment />} />
+                   
                   {/* Skills & Action */}
                   <Route path="/skill-gap" element={<SkillGap />} />
                   <Route path="/roadmap" element={<Roadmap />} />
@@ -72,8 +74,8 @@ export default function App() {
             </div>
             <Footer />
           </div>
-        </Router>
       </UserProvider>
     </AuthProvider>
+    </ThemeProvider>
   );
 }

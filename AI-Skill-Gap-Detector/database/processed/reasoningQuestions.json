@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "question": "Find the next number: 2, 4, 6, 8, ?",
+    "options": [
+      "9",
+      "10",
+      "12",
+      "14"
+    ],
+    "answer": "10"
+  },
+  {
+    "id": 2,
+    "question": "Find the next number: 3, 6, 12, 24, ?",
+    "options": [
+      "30",
+      "36",
+      "48",
+      "60"
+    ],
+    "answer": "48"
+  },
+  {
+    "id": 3,
+    "question": "Which one is different?",
+    "options": [
+      "Apple",
+      "Mango",
+      "Carrot",
+      "Banana"
+    ],
+    "answer": "Carrot"
+  },
+  {
+    "id": 4,
+    "question": "All roses are flowers. Which statement is correct?",
+    "options": [
+      "All flowers are roses",
+      "Roses are flowers",
+      "No roses are flowers",
+      "All roses are trees"
+    ],
+    "answer": "Roses are flowers"
+  },
+  {
+    "id": 5,
+    "question": "If A=1, B=2, C=3, what is the value of D?",
+    "options": [
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "answer": "4"
+  }
+]

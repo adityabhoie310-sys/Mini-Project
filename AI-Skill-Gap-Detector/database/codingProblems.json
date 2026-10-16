@@ -1,4 +1,7 @@
 [
-      {"id": 1, "title": "Two Sum", "difficulty": "Easy", "category": "Arrays & Hash Maps"},
-      {"id": 2, "title": "LRU Cache Implementation", "difficulty": "Medium", "category": "Data Structures"}
-    ]
+  {"id": 1, "title": "Two Sum", "difficulty": "Easy", "category": "Arrays & Hash Maps"},
+  {"id": 2, "title": "Reverse a String", "difficulty": "Easy", "category": "Strings"},
+  {"id": 3, "title": "LRU Cache Implementation", "difficulty": "Medium", "category": "Data Structures"},
+  {"id": 4, "title": "Find Maximum Number", "difficulty": "Easy", "category": "Arrays"},
+  {"id": 5, "title": "Check Palindrome", "difficulty": "Easy", "category": "Strings"}
+]

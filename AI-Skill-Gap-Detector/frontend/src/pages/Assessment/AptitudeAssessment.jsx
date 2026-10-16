@@ -183,11 +183,33 @@ const questions = [
 function AptitudeAssessment() {
   const navigate = useNavigate();
 
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [timeLeft, setTimeLeft] = useState(30 * 60);
+  const [currentQuestion, setCurrentQuestion] = useState(() => {
+    return parseInt(localStorage.getItem("aptitude_assessment_curr_idx") || "0", 10);
+  });
+  const [answers, setAnswers] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("aptitudeAssessmentAnswers") || "{}");
+    } catch {
+      return {};
+    }
+  });
+  const [timeLeft, setTimeLeft] = useState(() => {
+    return parseInt(localStorage.getItem("aptitude_assessment_time_left") || String(30 * 60), 10);
+  });
 
   const question = questions[currentQuestion];
+
+  useEffect(() => {
+    localStorage.setItem("aptitudeAssessmentAnswers", JSON.stringify(answers));
+  }, [answers]);
+
+  useEffect(() => {
+    localStorage.setItem("aptitude_assessment_curr_idx", String(currentQuestion));
+  }, [currentQuestion]);
+
+  useEffect(() => {
+    localStorage.setItem("aptitude_assessment_time_left", String(timeLeft));
+  }, [timeLeft]);
 
   useEffect(() => {
     if (timeLeft <= 0) {
