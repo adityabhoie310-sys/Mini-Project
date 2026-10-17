@@ -1,53 +1,46 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Brain, Target, BarChart3, Terminal } from 'lucide-react';
+import { ArrowRight, Brain, Target, BarChart3, Terminal, CheckCircle2, Sparkles, TrendingUp } from 'lucide-react';
+import '../styles/home.css';
+
+const features = [
+  { icon: <Brain />, title: 'Know what matters', text: 'A practical diagnosis shows the skills that will make the biggest difference for your chosen role.' },
+  { icon: <Target />, title: 'Learn with direction', text: 'A personalized weekly roadmap turns your gaps into small, achievable next steps.' },
+  { icon: <BarChart3 />, title: 'See your growth', text: 'Track readiness and performance over time, so your effort always has a visible payoff.' },
+  { icon: <Terminal />, title: 'Build confidence', text: 'Put concepts into practice with focused coding and problem-solving challenges.' }
+];
 
 export default function Home() {
   return (
-    <div className="home-container" style={{ padding: '3rem 1.5rem', textAlign: 'center' }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
-        <span style={{ background: '#eef2ff', color: '#4f46e5', padding: '0.4rem 1rem', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 600 }}>
-          Next-Gen AI Career Acceleration
-        </span>
-        <h1 style={{ fontSize: '3rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.2 }}>
-          Detect Your Skill Gaps. Bridge Them With AI.
-        </h1>
-        <p style={{ fontSize: '1.2rem', color: '#64748b', maxWidth: '650px' }}>
-          Pinpoint exact missing competencies for your target dream roles across technical, reasoning, and aptitude domains. Get tailored roadmaps and practice challenges.
-        </p>
-        <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-          <Link to="/select-job" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#4f46e5', color: '#fff', padding: '0.85rem 1.75rem', borderRadius: '8px', fontWeight: 600 }}>
-            <span>Explore Target Roles</span>
-            <ArrowRight size={18} />
-          </Link>
-          <Link to="/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#f1f5f9', color: '#334155', padding: '0.85rem 1.75rem', borderRadius: '8px', fontWeight: 600 }}>
-            <span>View Dashboard</span>
-          </Link>
+    <div className="home-container">
+      <section className="hero">
+        <div className="hero-copy">
+          <span className="eyebrow"><Sparkles size={15} /> AI-powered career planning</span>
+          <h1>Turn your next career move into a clear plan.</h1>
+          <p>Understand the exact skills your dream role requires, see where you stand, and follow an adaptive roadmap built around you.</p>
+          <div className="hero-actions">
+            <Link to="/select-job" className="hero-primary">Find your target role <ArrowRight size={18} /></Link>
+            <Link to="/dashboard" className="hero-secondary">View my dashboard</Link>
+          </div>
+          <div className="hero-proof"><CheckCircle2 size={17} /> Start with a focused assessment in under 10 minutes</div>
         </div>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem', marginTop: '5rem', textAlign: 'left' }}>
-        <div className="card">
-          <Brain color="#4f46e5" size={32} style={{ marginBottom: '1rem' }} />
-          <h3>AI Diagnosis</h3>
-          <p style={{ color: '#64748b' }}>Precision assessment engine measuring your actual vs required role competency.</p>
+        <div className="hero-preview" aria-label="Example readiness snapshot">
+          <div className="preview-top"><span>Career readiness</span><span className="live-dot">Updated today</span></div>
+          <div className="score-row"><div className="score-ring"><strong>72</strong><small>/100</small></div><div><strong>Great momentum</strong><p>You're closer than you think.</p></div></div>
+          <div className="skill-list">
+            <div><span>JavaScript</span><b><i style={{ width: '82%' }} /></b><em>82%</em></div>
+            <div><span>Problem solving</span><b><i style={{ width: '68%' }} /></b><em>68%</em></div>
+            <div><span>System design</span><b><i style={{ width: '42%' }} /></b><em>42%</em></div>
+          </div>
+          <div className="next-step"><TrendingUp size={18} /><span><small>Next best step</small>Practice system design basics</span><ArrowRight size={17} /></div>
         </div>
-        <div className="card">
-          <Target color="#4f46e5" size={32} style={{ marginBottom: '1rem' }} />
-          <h3>Personalized Roadmap</h3>
-          <p style={{ color: '#64748b' }}>Weekly structured learning timeline customized to fill your high-priority gaps.</p>
+      </section>
+      <section className="home-section">
+        <div className="section-heading"><span>Everything in one place</span><h2>From uncertainty to measurable progress.</h2></div>
+        <div className="feature-grid">
+          {features.map((feature) => <article className="feature-card" key={feature.title}><div className="feature-icon">{feature.icon}</div><h3>{feature.title}</h3><p>{feature.text}</p><span>Explore <ArrowRight size={15} /></span></article>)}
         </div>
-        <div className="card">
-          <BarChart3 color="#4f46e5" size={32} style={{ marginBottom: '1rem' }} />
-          <h3>Realtime Analytics</h3>
-          <p style={{ color: '#64748b' }}>Readiness score calculation, progress radar, and performance tracking.</p>
-        </div>
-        <div className="card">
-          <Terminal color="#4f46e5" size={32} style={{ marginBottom: '1rem' }} />
-          <h3>Interactive Code Practice</h3>
-          <p style={{ color: '#64748b' }}>In-browser JavaScript coding challenges and algorithmic problem sets.</p>
-        </div>
-      </div>
+      </section>
     </div>
   );
 }

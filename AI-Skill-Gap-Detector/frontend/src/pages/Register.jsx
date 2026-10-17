@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/register.css";
+import { register } from "../services/authService";
+import { useAuth } from "../hooks/useAuth";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { loginUser } = useAuth();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -14,6 +17,7 @@ const Register = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -24,7 +28,7 @@ const Register = () => {
     setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const { name, email, password, confirmPassword } = formData;
@@ -44,10 +48,16 @@ const Register = () => {
       return;
     }
 
-    console.log("Register Data:", formData);
-
-    // Backend registration will be connected later
-    navigate("/login");
+    setIsSubmitting(true);
+    try {
+      const { data } = await register({ name, email, password });
+      loginUser(data.token, data.user);
+      navigate("/dashboard");
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || "Unable to create your account. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -174,8 +184,8 @@ const Register = () => {
               />
             </div>
 
-            <button type="submit" className="register-button">
-              Create Account →
+            <button type="submit" className="register-button" disabled={isSubmitting}>
+              {isSubmitting ? "Creating account…" : "Create Account →"}
             </button>
 
           </form>

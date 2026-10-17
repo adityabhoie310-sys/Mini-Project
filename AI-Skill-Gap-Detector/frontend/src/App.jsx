@@ -39,11 +39,11 @@ export default function App() {
     <ThemeProvider>
       <AuthProvider>
         <UserProvider>
-          <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+          <div className="app-shell">
             <Navbar />
-            <div style={{ display: 'flex', flex: 1 }}>
+            <div className="app-body">
               <Sidebar />
-              <main style={{ flex: 1, padding: '2rem', background: '#f8fafc' }}>
+              <main className="app-main">
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/login" element={<Login />} />

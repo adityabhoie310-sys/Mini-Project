@@ -16,7 +16,7 @@ function Assessment() {
       id: 1,
       title: "Technical Coding Skills",
       icon: "💻",
-      questions: "3 challenges",
+      questions: "5 React challenges",
       duration: "30 Minutes",
       description:
         "Solve live JavaScript coding challenges and validate each solution against test cases.",

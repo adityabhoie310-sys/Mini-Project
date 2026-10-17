@@ -23,6 +23,23 @@
   color: #64748b;
 }
 
+.assessment-scope {
+  display: grid;
+  grid-template-columns: minmax(220px, .8fr) minmax(0, 1.2fr);
+  gap: 24px;
+  margin: 0 0 24px;
+  padding: 22px 24px;
+  border: 1px solid #c7d2fe;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #eef2ff, #fafaff);
+}
+
+.scope-label { color: #4f46e5; font-size: .74rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.assessment-scope h2 { margin: 5px 0; color: #312e81; font-size: 1.25rem; }
+.assessment-scope p { color: #64748b; font-size: .88rem; line-height: 1.55; }
+.assessment-scope ul { display: flex; flex-wrap: wrap; align-content: center; gap: 8px; list-style: none; }
+.assessment-scope li { padding: 7px 10px; border: 1px solid #ddd6fe; border-radius: 999px; color: #4338ca; background: #fff; font-size: .8rem; font-weight: 650; }
+
 /* Timer */
 
 .assessment-timer {
@@ -213,6 +230,11 @@
 /* Responsive */
 
 @media (max-width: 700px) {
+  .assessment-scope {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
   .technical-page {
     padding: 25px 5%;
   }

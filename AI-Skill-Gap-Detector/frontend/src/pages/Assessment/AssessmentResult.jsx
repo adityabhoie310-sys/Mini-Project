@@ -180,6 +180,11 @@ function AssessmentResult() {
       technicalRatings[skill.key] <= 5
   );
 
+  const hasTechnicalResult =
+    Number.isFinite(technicalAnswers.passed) &&
+    Number.isFinite(technicalAnswers.total) &&
+    technicalAnswers.total > 0;
+
   const technicalScore = hasTechnicalRatings
     ? Math.round(
         (SKILLS.reduce(
@@ -189,13 +194,11 @@ function AssessmentResult() {
           (SKILLS.length * 5)) *
           100
       )
-    : Number.isFinite(technicalAnswers.passed) &&
-        Number.isFinite(technicalAnswers.total) &&
-        technicalAnswers.total > 0
+    : hasTechnicalResult
       ? Math.round(
           (technicalAnswers.passed / technicalAnswers.total) * 100
         )
-      : 80;
+      : 0;
 
   const reasoningScore = calculateScore(
     reasoningAnswers,
@@ -211,6 +214,8 @@ function AssessmentResult() {
     )
   );
 
+  const hasAssessmentData = hasTechnicalResult || Object.keys(reasoningAnswers).length > 0 || Object.keys(aptitudeAnswers).length > 0;
+
   const overallScore = Math.round(
     (technicalScore + reasoningScore + aptitudeScore) / 3
   );
@@ -221,7 +226,7 @@ function AssessmentResult() {
     const derived = {};
     SKILLS.forEach((skill) => {
       const req = requirements[skill.key] ?? 3;
-      const scoreRatio = (technicalScore || 75) / 100;
+      const scoreRatio = technicalScore / 100;
       derived[skill.key] = Math.max(1, Math.min(5, Math.round(req * (0.5 + 0.5 * scoreRatio))));
     });
     return derived;
@@ -251,7 +256,7 @@ function AssessmentResult() {
     reasoningScore,
     aptitudeScore,
     overallScore,
-    hasTechnicalRatings: true,
+    hasTechnicalRatings,
     technicalRatings: effectiveRatings,
     skillGaps,
     missingSkills,
@@ -277,10 +282,20 @@ function AssessmentResult() {
     [
       "technicalAssessmentAnswers",
       "technicalCodingSubmissions",
+      "technicalCodingSubmissionsReactV1",
       "technicalSkillRatings",
+      "technicalAssessmentLanguage",
       "reasoningAssessmentAnswers",
       "aptitudeAssessmentAnswers",
       "assessmentResults",
+      "technicalAssessmentDeadline",
+      "technicalAssessmentDeadlineReactV1",
+      "reasoning_assessment_curr_idx",
+      "reasoning_assessment_deadline",
+      "aptitude_assessment_curr_idx",
+      "aptitude_assessment_deadline",
+      "reasoning_assessment_time_left",
+      "aptitude_assessment_time_left",
     ].forEach((key) => localStorage.removeItem(key));
 
     navigate("/assessment");
@@ -293,19 +308,21 @@ function AssessmentResult() {
       icon: "💻",
       description: hasTechnicalRatings
         ? "Self-rated technical proficiency"
-        : "No complete technical rating available",
+        : hasTechnicalResult
+          ? `${technicalAnswers.passed} of ${technicalAnswers.total} practical challenges passed`
+          : "Technical assessment not completed",
     },
     {
       title: "Logical Reasoning",
       score: reasoningScore,
       icon: "🧠",
-      description: "Reasoning question answers",
+      description: `${Object.keys(reasoningAnswers).length} reasoning answer${Object.keys(reasoningAnswers).length === 1 ? "" : "s"} recorded`,
     },
     {
       title: "Aptitude",
       score: aptitudeScore,
       icon: "📊",
-      description: "Numerical and quantitative answers",
+      description: `${Object.keys(aptitudeAnswers).length} aptitude answer${Object.keys(aptitudeAnswers).length === 1 ? "" : "s"} recorded`,
     },
   ];
 
@@ -328,13 +345,12 @@ function AssessmentResult() {
         </div>
 
         <div className="overall-content">
-          <span className="level-badge">{getLevel(overallScore)}</span>
+          <span className="level-badge">{hasAssessmentData ? getLevel(overallScore) : "Assessment pending"}</span>
           <h2>Your assessment overview</h2>
-          <p>
-            Your combined score is the average of technical skills,
-            logical reasoning and aptitude. Improve your weakest areas
-            to strengthen your preparation.
-          </p>
+          <p>{hasAssessmentData
+            ? "Your combined score is the average of technical skills, logical reasoning and aptitude. Improve your weakest areas to strengthen your preparation."
+            : "No submitted assessment data was found. Complete the three assessment sections to generate an accurate score and learning priorities."}</p>
+          {!hasAssessmentData && <button className="primary-result-btn" onClick={() => navigate("/assessment")}>Start assessment →</button>}
         </div>
       </section>
 

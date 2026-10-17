@@ -1,8 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import "../styles/dashboard.css";
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  let results = null;
+  try {
+    results = JSON.parse(localStorage.getItem("assessmentResults") || "null");
+  } catch {
+    results = null;
+  }
+  const name = user?.name || "there";
+  const readiness = Number.isFinite(results?.overallScore) ? results.overallScore : 0;
+  const assessmentComplete = Boolean(results?.completedAt);
+  const assessmentLabel = assessmentComplete ? "Complete" : "Not started";
   return (
     <div className="dashboard-page">
 
@@ -13,9 +25,9 @@ const Dashboard = () => {
         </Link>
 
         <div className="dashboard-user">
-          <div className="user-avatar">A</div>
+          <div className="user-avatar">{name.charAt(0).toUpperCase()}</div>
           <div>
-            <h4>Welcome, Adi</h4>
+            <h4>Welcome, {name}</h4>
             <p>Student</p>
           </div>
         </div>
@@ -30,7 +42,7 @@ const Dashboard = () => {
             <span className="welcome-label">AI Career Assistant</span>
 
             <h1>
-              Welcome back, Adi! 👋
+              Welcome back, {name}! 👋
             </h1>
 
             <p>
@@ -40,7 +52,7 @@ const Dashboard = () => {
           </div>
 
           <Link to="/select-job" className="start-button">
-            Start Assessment →
+            {assessmentComplete ? "Retake Assessment →" : "Start Assessment →"}
           </Link>
         </section>
 
@@ -51,7 +63,7 @@ const Dashboard = () => {
             <div className="stat-icon">🎯</div>
             <div>
               <span>Job Readiness</span>
-              <h2>0%</h2>
+              <h2>{readiness}%</h2>
             </div>
           </div>
 
@@ -59,7 +71,7 @@ const Dashboard = () => {
             <div className="stat-icon">📊</div>
             <div>
               <span>Assessment</span>
-              <h2>Not Started</h2>
+              <h2>{assessmentLabel}</h2>
             </div>
           </div>
 
@@ -67,7 +79,7 @@ const Dashboard = () => {
             <div className="stat-icon">🧠</div>
             <div>
               <span>Skills Assessed</span>
-              <h2>0</h2>
+              <h2>{assessmentComplete ? 3 : 0}</h2>
             </div>
           </div>
 
@@ -93,7 +105,7 @@ const Dashboard = () => {
               </div>
 
               <span className="assessment-status">
-                Not Started
+                {assessmentLabel}
               </span>
             </div>
 
@@ -108,7 +120,7 @@ const Dashboard = () => {
                 <span>💻</span>
                 <div>
                   <h4>Technical Skills</h4>
-                  <p>50 Questions</p>
+                  <p>3 practical challenges</p>
                 </div>
               </div>
 
@@ -130,8 +142,8 @@ const Dashboard = () => {
 
             </div>
 
-            <Link to="/select-job" className="assessment-button">
-              Start Assessment →
+            <Link to={assessmentComplete ? "/assessment/result" : "/select-job"} className="assessment-button">
+              {assessmentComplete ? "View Results →" : "Start Assessment →"}
             </Link>
 
           </div>
@@ -208,11 +220,11 @@ const Dashboard = () => {
               <p>Choose your target career</p>
             </Link>
 
-            <div className="action-card disabled">
+            <Link to="/resources" className="action-card">
               <span>📚</span>
               <h3>Resources</h3>
-              <p>Available after assessment</p>
-            </div>
+              <p>Browse curated learning resources</p>
+            </Link>
 
             <Link to="/coding-practice" className="action-card">
               <span>💻</span>

@@ -20,21 +20,21 @@ import "../../styles/technicalAssessment.css";
 
 /* ---------------- Configuration ---------------- */
 
-const STORAGE_KEY = "technicalCodingSubmissions";
+const STORAGE_KEY = "technicalCodingSubmissionsReactV1";
 
 const RESULT_KEY = "technicalAssessmentAnswers";
 
 const LANGUAGE_KEY = "technicalAssessmentLanguage";
 
-const TIMER_KEY = "technicalAssessmentDeadline";
+const TIMER_KEY = "technicalAssessmentDeadlineReactV1";
 
 const TOTAL_SECONDS = 30 * 60;
 
-const WARNING_SECONDS = 5 * 60;
+const WARNING_SECONDS = 2 * 60;
 
-const DANGER_SECONDS = 60;
+const DANGER_SECONDS = 30;
 
-const AUTO_ADVANCE_MS = 4000;
+const AUTO_ADVANCE_MS = 2000;
 
 const NEXT_PATH = "/assessment/reasoning";
 
@@ -54,25 +54,45 @@ const PROGRAMMING_LANGUAGES = [
 
 ];
 
+// The assessment is scoped to the role selected in the career step. The practical
+// coding exercises verify practical problem solving; this focus map makes the
+// interview topics and follow-up roadmap role-specific.
+const ROLE_FOCUS = {
+  "Frontend Developer": ["JavaScript core & async", "Semantic HTML, CSS & accessibility", "React hooks, state & rendering", "Performance, browser APIs & security", "Practical UI exercises"],
+  "Backend Developer": ["HTTP, REST & authentication", "SQL/NoSQL, indexes & transactions", "Architecture, caching & queues", "Concurrency & reliability", "API and rate-limiter design"],
+  "MERN Stack Developer": ["MongoDB & Mongoose", "Express middleware & JWT", "React, Router & API integration", "Node event loop & non-blocking I/O", "Full-stack architecture & deployment"],
+  "Data Analyst": ["SQL joins, CTEs & window functions", "Excel formulas & pivot tables", "Statistics & A/B testing", "Pandas, NumPy & data cleaning", "KPIs, dashboards & case analysis"],
+  "Machine Learning Engineer": ["ML fundamentals & evaluation", "Algorithms, validation & feature engineering", "Deep learning & transformers", "Math, probability & optimization", "MLOps, LLMs and model deployment"],
+};
+
+function getSelectedRole() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("selectedJob") || "null");
+    return typeof saved?.title === "string" ? saved.title : "Frontend Developer";
+  } catch {
+    return "Frontend Developer";
+  }
+}
+
 /* ---------------- Coding challenges ---------------- */
 
 const challenges = [
 
   {
 
-    id: "sum",
+    id: "modalFocus",
 
-    title: "Sum two numbers",
+    title: "Accessible modal keyboard navigation",
 
-    difficulty: "Easy",
+    difficulty: "Intermediate",
 
     prompt:
 
-      "Write a function named sum that returns the total of two numbers.",
+      "Build an accessible modal in React with role=dialog, aria-modal, aria-labelledby, Escape-to-close, and focus trapping. In this runnable exercise, write nextFocusIndex(total, current, direction) to return the next focusable element index. direction is 1 for Tab and -1 for Shift+Tab.",
 
-    functionName: "sum",
+    functionName: "nextFocusIndex",
 
-    starterCode: `function sum(a, b) {
+    starterCode: `function nextFocusIndex(total, current, direction) {
 
   // Write your solution here
 
@@ -80,11 +100,11 @@ const challenges = [
 
     tests: [
 
-      { args: [2, 3], expected: 5 },
+      { args: [3, 2, 1], expected: 0 },
 
-      { args: [-4, 10], expected: 6 },
+      { args: [3, 0, -1], expected: 2 },
 
-      { args: [0, 0], expected: 0 },
+      { args: [4, 1, 1], expected: 2 },
 
     ],
 
@@ -92,19 +112,19 @@ const challenges = [
 
   {
 
-    id: "reverseString",
+    id: "fetchState",
 
-    title: "Reverse a string",
+    title: "Fetch API data with useEffect",
 
-    difficulty: "Easy",
+    difficulty: "Intermediate",
 
     prompt:
 
-      "Write a function named reverseString that returns the characters in reverse order.",
+      "Fetch API data with useEffect and show loading, error, and success states; then extract the lifecycle into a reusable useFetch custom Hook. In this runnable exercise, write getRequestState({ loading, error, data }) which returns loading, error, empty, or success for the UI state.",
 
-    functionName: "reverseString",
+    functionName: "getRequestState",
 
-    starterCode: `function reverseString(value) {
+    starterCode: `function getRequestState({ loading, error, data }) {
 
   // Write your solution here
 
@@ -112,11 +132,11 @@ const challenges = [
 
     tests: [
 
-      { args: ["skill"], expected: "lliks" },
+      { args: [{ loading: true, error: null, data: null }], expected: "loading" },
 
-      { args: ["React"], expected: "tcaeR" },
+      { args: [{ loading: false, error: "Network error", data: null }], expected: "error" },
 
-      { args: [""], expected: "" },
+      { args: [{ loading: false, error: null, data: [] }], expected: "empty" },
 
     ],
 
@@ -124,19 +144,19 @@ const challenges = [
 
   {
 
-    id: "findMax",
+    id: "memoizedSearch",
 
-    title: "Find the largest value",
+    title: "Search with useMemo and useCallback",
 
-    difficulty: "Easy",
+    difficulty: "Intermediate",
 
     prompt:
 
-      "Write a function named findMax that returns the largest number in an array.",
+      "Build a search component using useMemo for filtered results and useCallback for stable handlers. In this runnable exercise, write filterByQuery(items, query) to return items whose name contains query, case-insensitively. An empty query returns all items.",
 
-    functionName: "findMax",
+    functionName: "filterByQuery",
 
-    starterCode: `function findMax(numbers) {
+    starterCode: `function filterByQuery(items, query) {
 
   // Write your solution here
 
@@ -144,11 +164,77 @@ const challenges = [
 
     tests: [
 
-      { args: [[3, 9, 1]], expected: 9 },
+      { args: [[{ name: "React" }, { name: "Router" }, { name: "Node" }], "rea"], expected: [{ name: "React" }] },
 
-      { args: [[-8, -2, -5]], expected: -2 },
+      { args: [[{ name: "React" }, { name: "Router" }], "RO"], expected: [{ name: "Router" }] },
 
-      { args: [[7]], expected: 7 },
+      { args: [[{ name: "React" }, { name: "Router" }], ""], expected: [{ name: "React" }, { name: "Router" }] },
+
+    ],
+
+  },
+
+  {
+
+    id: "todoReducer",
+
+    title: "To-do application state with useState",
+
+    difficulty: "Intermediate",
+
+    prompt:
+
+      "Build a to-do app with add, edit, delete, and complete functionality using useState. In this runnable exercise, write updateTodos(todos, action). action has type add, edit, toggle, or delete; each todo is { id, text, completed }.",
+
+    functionName: "updateTodos",
+
+    starterCode: `function updateTodos(todos, action) {
+
+  // Return a new todo array. Do not mutate todos.
+
+}`,
+
+    tests: [
+
+      { args: [[], { type: "add", todo: { id: 1, text: "Learn hooks", completed: false } }], expected: [{ id: 1, text: "Learn hooks", completed: false }] },
+
+      { args: [[{ id: 1, text: "Learn hooks", completed: false }], { type: "toggle", id: 1 }], expected: [{ id: 1, text: "Learn hooks", completed: true }] },
+
+      { args: [[{ id: 1, text: "Old", completed: false }, { id: 2, text: "Keep", completed: false }], { type: "edit", id: 1, text: "New" }], expected: [{ id: 1, text: "New", completed: false }, { id: 2, text: "Keep", completed: false }] },
+
+      { args: [[{ id: 1, text: "Remove", completed: false }], { type: "delete", id: 1 }], expected: [] },
+
+    ],
+
+  },
+
+  {
+
+    id: "lazyRoutes",
+
+    title: "React Router, Context, and lazy loading",
+
+    difficulty: "Intermediate",
+
+    prompt:
+
+      "Create a multi-page React app using React Router, Context API, and lazy loading. In this runnable exercise, write getLazyRouteNames(routes) to return the paths of routes configured for lazy loading. Each route is { path, lazy }.",
+
+    functionName: "getLazyRouteNames",
+
+    starterCode: `function getLazyRouteNames(routes) {
+
+  // Return an array of paths where lazy is true.
+
+}`,
+
+    tests: [
+
+      { args: [[{ path: "/", lazy: false }, { path: "/dashboard", lazy: true }]], expected: ["/dashboard"] },
+
+      { args: [[{ path: "/login", lazy: true }, { path: "/settings", lazy: true }]], expected: ["/login", "/settings"] },
+
+      { args: [[{ path: "/", lazy: false }]], expected: [] },
 
     ],
 
@@ -180,7 +266,8 @@ self.onmessage = ({ data }) => {
     const checks = data.tests.map(({ args, expected }) => {
       try {
         const actual = candidate(...args);
-        return { passed: Object.is(actual, expected), expected, actual, error: null };
+        const passed = JSON.stringify(actual) === JSON.stringify(expected);
+        return { passed, expected, actual, error: null };
       } catch (error) {
         return {
           passed: false,
@@ -484,11 +571,27 @@ function displayValue(value) {
 
 }
 
+function getAssessedSkillRatings(submissions) {
+  const passed = (id) => submissions[id]?.passed === true;
+  const passedCount = challenges.filter(({ id }) => passed(id)).length;
+
+  return {
+    // These values are intentionally limited to competencies covered by the
+    // five React exercises; omitted skills are displayed as "Not assessed".
+    JavaScript: Math.round((passedCount / challenges.length) * 5),
+    React: Math.round((passedCount / challenges.length) * 5),
+    HTML: passed("modalFocus") ? 4 : 0,
+    "REST API": passed("fetchState") ? 4 : 0,
+  };
+}
+
 /* ---------------- Main component ---------------- */
 
 export default function TechnicalAssessment() {
 
   const navigate = useNavigate();
+  const [targetRole] = useState(getSelectedRole);
+  const focusTopics = ROLE_FOCUS[targetRole] || ROLE_FOCUS["Frontend Developer"];
 
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -546,6 +649,11 @@ export default function TechnicalAssessment() {
 
     [submissions]
 
+  );
+
+  const assessedSkillRatings = useMemo(
+    () => getAssessedSkillRatings(submissions),
+    [submissions]
   );
 
   const completionPercentage = Math.round(
@@ -669,6 +777,12 @@ export default function TechnicalAssessment() {
 
             language,
 
+            targetRole,
+
+            focusTopics,
+
+            skillRatings: assessedSkillRatings,
+
             challenges: challenges.map((item) => ({
 
               id: item.id,
@@ -697,7 +811,7 @@ export default function TechnicalAssessment() {
 
     },
 
-    [passedCount, deadline, language, submissions]
+    [passedCount, deadline, language, submissions, targetRole, focusTopics, assessedSkillRatings]
 
   );
 
@@ -953,7 +1067,7 @@ export default function TechnicalAssessment() {
 
           <p>
 
-            Solve practical programming problems and test your solutions.
+            {targetRole} track · solve practical coding exercises and review the interview areas your role requires.
 
           </p>
 
@@ -1029,12 +1143,23 @@ export default function TechnicalAssessment() {
 
               ? "Less than 1 minute left!"
 
-              : "Less than 5 minutes left."}
+              : "Less than 2 minutes left."}
 
           </p>
 
         )}
 
+      </section>
+
+      <section className="assessment-scope" aria-label={`${targetRole} assessment topics`}>
+        <div>
+          <span className="scope-label">Your technical track</span>
+          <h2>{targetRole}</h2>
+          <p>These are the competencies used to shape your technical review and personalized roadmap.</p>
+        </div>
+        <ul>
+          {focusTopics.map((topic) => <li key={topic}>✓ {topic}</li>)}
+        </ul>
       </section>
 
       {/* Challenge progress */}
@@ -1421,16 +1546,28 @@ export default function TechnicalAssessment() {
             {activeIndex + 1} / {challenges.length}
           </span>
 
-          <button
-            type="button"
-            className="next-btn"
-            onClick={() => goToChallenge(activeIndex + 1)}
-            disabled={
-              activeIndex === challenges.length - 1 || isRunning || locked
-            }
-          >
-            Next →
-          </button>
+          {activeIndex === challenges.length - 1 ? (
+            <button
+              type="button"
+              className="finish-btn"
+              onClick={() => {
+                saveResult(false);
+                navigate(NEXT_PATH);
+              }}
+              disabled={isRunning || locked}
+            >
+              Finish section →
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="next-btn"
+              onClick={() => goToChallenge(activeIndex + 1)}
+              disabled={isRunning || locked}
+            >
+              Next →
+            </button>
+          )}
         </nav>
 
       </main>

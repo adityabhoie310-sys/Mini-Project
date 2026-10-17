@@ -15,25 +15,16 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside style={{ width: '250px', background: '#fff', borderRight: '1px solid #e2e8f0', minHeight: 'calc(100vh - 65px)', padding: '1.5rem 1rem' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+    <aside className="sidebar">
+      <div className="sidebar-label">Your workspace</div>
+      <div className="sidebar-nav">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
             <NavLink
               key={item.path}
               to={item.path}
-              style={({ isActive }) => ({
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-                padding: '0.65rem 1rem',
-                borderRadius: '8px',
-                fontWeight: 500,
-                color: isActive ? '#4f46e5' : '#64748b',
-                background: isActive ? '#eef2ff' : 'transparent',
-                textDecoration: 'none'
-              })}
+              className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
             >
               <Icon size={18} />
               <span>{item.label}</span>

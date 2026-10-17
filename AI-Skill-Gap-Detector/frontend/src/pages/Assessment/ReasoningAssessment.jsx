@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/reasoningAssessment.css";
 
@@ -225,12 +225,32 @@ const questions = [
   },
 ];
 
+const SESSION_INDEX_KEY = "reasoning_assessment_curr_idx";
+const SESSION_DEADLINE_KEY = "reasoning_assessment_deadline";
+const DURATION_SECONDS = 25 * 60;
+
+function getDeadline() {
+  const saved = Number(localStorage.getItem(SESSION_DEADLINE_KEY));
+  // Preserve an expired deadline long enough for the section to submit itself.
+  if (Number.isFinite(saved) && saved > 0) return saved;
+  const deadline = Date.now() + DURATION_SECONDS * 1000;
+  localStorage.setItem(SESSION_DEADLINE_KEY, String(deadline));
+  return deadline;
+}
+
+function getSavedIndex() {
+  const saved = Number.parseInt(localStorage.getItem(SESSION_INDEX_KEY) || "0", 10);
+  return Number.isInteger(saved) ? Math.min(Math.max(saved, 0), questions.length - 1) : 0;
+}
+
+function secondsRemaining(deadline) {
+  return Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+}
+
 function ReasoningAssessment() {
   const navigate = useNavigate();
 
-  const [currentQuestion, setCurrentQuestion] = useState(() => {
-    return parseInt(localStorage.getItem("reasoning_assessment_curr_idx") || "0", 10);
-  });
+  const [currentQuestion, setCurrentQuestion] = useState(getSavedIndex);
   const [answers, setAnswers] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("reasoningAssessmentAnswers") || "{}");
@@ -238,9 +258,9 @@ function ReasoningAssessment() {
       return {};
     }
   });
-  const [timeLeft, setTimeLeft] = useState(() => {
-    return parseInt(localStorage.getItem("reasoning_assessment_time_left") || String(25 * 60), 10);
-  });
+  const [deadline] = useState(getDeadline);
+  const [timeLeft, setTimeLeft] = useState(() => secondsRemaining(deadline));
+  const finishedRef = useRef(false);
 
   const question = questions[currentQuestion];
 
@@ -249,12 +269,8 @@ function ReasoningAssessment() {
   }, [answers]);
 
   useEffect(() => {
-    localStorage.setItem("reasoning_assessment_curr_idx", String(currentQuestion));
+    localStorage.setItem(SESSION_INDEX_KEY, String(currentQuestion));
   }, [currentQuestion]);
-
-  useEffect(() => {
-    localStorage.setItem("reasoning_assessment_time_left", String(timeLeft));
-  }, [timeLeft]);
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -263,11 +279,11 @@ function ReasoningAssessment() {
     }
 
     const timer = setInterval(() => {
-      setTimeLeft((previous) => previous - 1);
+      setTimeLeft(secondsRemaining(deadline));
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft]);
+  }, [deadline, timeLeft]);
 
   const formatTime = () => {
     const minutes = Math.floor(timeLeft / 60);
@@ -298,16 +314,20 @@ function ReasoningAssessment() {
   };
 
   const finishAssessment = () => {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
     localStorage.setItem(
       "reasoningAssessmentAnswers",
       JSON.stringify(answers)
     );
+    localStorage.removeItem(SESSION_INDEX_KEY);
+    localStorage.removeItem(SESSION_DEADLINE_KEY);
 
     navigate("/assessment/aptitude");
   };
 
-  const progress =
-    ((currentQuestion + 1) / questions.length) * 100;
+  const answeredCount = Object.keys(answers).filter((id) => questions.some((item) => String(item.id) === id)).length;
+  const progress = (answeredCount / questions.length) * 100;
 
   return (
     <div className="reasoning-page">
@@ -336,7 +356,7 @@ function ReasoningAssessment() {
           </span>
 
           <span>
-            {Math.round(progress)}% Complete
+            {answeredCount} of {questions.length} answered
           </span>
         </div>
 
@@ -376,6 +396,7 @@ function ReasoningAssessment() {
                     selected ? "selected" : ""
                   }`}
                   onClick={() => selectAnswer(option)}
+                  aria-pressed={selected}
                 >
                   <span className="reasoning-option-letter">
                     {String.fromCharCode(65 + index)}

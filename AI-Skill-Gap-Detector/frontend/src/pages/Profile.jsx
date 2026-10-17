@@ -1,19 +1,29 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/profile.css";
+import { useAuth } from "../hooks/useAuth";
 
 function Profile() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
-  const [profile, setProfile] = useState({
-    name: "Adi",
-    email: "adi@example.com",
+  const [profile, setProfile] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("userProfile") || "null");
+      if (saved && typeof saved === "object") return saved;
+    } catch {
+      // Fall through to the authenticated user defaults.
+    }
+    return {
+    name: user?.name || "User",
+    email: user?.email || "",
     phone: "",
     college: "",
     course: "Computer Science & Engineering",
     year: "3rd Year",
     targetJob: "MERN Developer",
     bio: "Aspiring software developer focused on MERN Stack and AI-powered applications.",
+    };
   });
 
   const [editing, setEditing] = useState(false);
@@ -40,6 +50,7 @@ function Profile() {
   };
 
   const handleLogout = () => {
+    logout();
     localStorage.removeItem("selectedJob");
     localStorage.removeItem("technicalAssessmentAnswers");
     localStorage.removeItem("reasoningAssessmentAnswers");

@@ -3,15 +3,18 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/navbar.css";
 
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../hooks/useAuth";
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const { isDark, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
 
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    logout();
     localStorage.removeItem("selectedJob");
     localStorage.removeItem("technicalAssessmentAnswers");
     localStorage.removeItem("reasoningAssessmentAnswers");
@@ -94,11 +97,11 @@ function Navbar() {
               onClick={() => setProfileOpen(!profileOpen)}
             >
               <div className="profile-avatar">
-                A
+                {(user?.name || "User").charAt(0).toUpperCase()}
               </div>
 
               <div className="profile-info">
-                <span className="profile-name">Adi</span>
+                <span className="profile-name">{user?.name || "User"}</span>
                 <span className="profile-role">Student</span>
               </div>
 
@@ -111,10 +114,10 @@ function Navbar() {
               <div className="profile-dropdown">
 
                 <div className="dropdown-header">
-                  <div className="dropdown-avatar">A</div>
+                  <div className="dropdown-avatar">{(user?.name || "User").charAt(0).toUpperCase()}</div>
 
                   <div>
-                    <strong>Adi</strong>
+                    <strong>{user?.name || "User"}</strong>
                     <span>Student</span>
                   </div>
                 </div>

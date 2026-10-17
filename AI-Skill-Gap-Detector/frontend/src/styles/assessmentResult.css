@@ -88,6 +88,10 @@
   color: #64748b;
 }
 
+.overall-content .primary-result-btn {
+  margin-top: 18px;
+}
+
 /* Breakdown */
 
 .score-section h2 {
