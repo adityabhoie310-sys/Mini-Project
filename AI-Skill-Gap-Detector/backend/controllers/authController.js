@@ -10,13 +10,18 @@ const generateToken = (id) => {
 
 // In-memory user store fallback when MongoDB is offline
 const inMemoryUsers = [];
+const normaliseEmail = (email) => String(email || "").trim().toLowerCase();
+const validEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const allowMemoryFallback = process.env.NODE_ENV !== "production";
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) {
+    const { name, password } = req.body;
+    const email = normaliseEmail(req.body.email);
+    if (!name?.trim() || !email || !password) {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
+    if (!validEmail(email) || password.length < 8) return res.status(400).json({ message: 'Use a valid email and a password with at least 8 characters.' });
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -36,9 +41,10 @@ exports.register = async (req, res) => {
 
       return res.status(201).json({
         token: generateToken(user._id),
-        user: { id: user._id, name: user.name, email: user.email }
+        user: { id: user._id, name: user.name, email: user.email, role: user.role }
       });
     } catch (dbErr) {
+      if (!allowMemoryFallback) return res.status(503).json({ message: "Account storage is temporarily unavailable." });
       // Fallback in-memory
       const existingMem = inMemoryUsers.find(u => u.email === email);
       if (existingMem) {
@@ -48,7 +54,7 @@ exports.register = async (req, res) => {
       inMemoryUsers.push(memUser);
       return res.status(201).json({
         token: generateToken(memUser.id),
-        user: { id: memUser.id, name: memUser.name, email: memUser.email }
+        user: { id: memUser.id, name: memUser.name, email: memUser.email, role: "student" }
       });
     }
   } catch (err) {
@@ -58,7 +64,8 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const password = req.body.password;
+    const email = normaliseEmail(req.body.email);
     if (!email || !password) {
       return res.status(400).json({ message: 'Please provide email and password' });
     }
@@ -68,7 +75,7 @@ exports.login = async (req, res) => {
       if (user && (await bcrypt.compare(password, user.password))) {
         return res.json({
           token: generateToken(user._id),
-          user: { id: user._id, name: user.name, email: user.email }
+          user: { id: user._id, name: user.name, email: user.email, role: user.role }
         });
       }
     } catch (dbErr) {
@@ -79,15 +86,7 @@ exports.login = async (req, res) => {
     if (memUser && (await bcrypt.compare(password, memUser.password))) {
       return res.json({
         token: generateToken(memUser.id),
-        user: { id: memUser.id, name: memUser.name, email: memUser.email }
-      });
-    }
-
-    // Default test dev login fallback
-    if (password === 'password' || password.length >= 6) {
-      return res.json({
-        token: generateToken('dev-user-id'),
-        user: { id: 'dev-user-id', name: email.split('@')[0], email }
+        user: { id: memUser.id, name: memUser.name, email: memUser.email, role: "student" }
       });
     }
 

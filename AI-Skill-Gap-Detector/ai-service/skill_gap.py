@@ -28,13 +28,17 @@ def analyze_skill_gap(job_id: str, assessed_skills: dict):
         raise ValueError(f"Unknown job ID: {job_id}")
 
     required_skills = job["skills"]
-    normalized_scores = {
-        str(name).strip().lower(): int(score)
-        for name, score in assessed_skills.items()
-    }
-
-    for name, score in normalized_scores.items():
-        if not 0 <= score <= 5:
+    normalized_scores = {}
+    for name, score in assessed_skills.items():
+        if score is None:
+            continue
+        try:
+            val = round(float(score))
+        except (ValueError, TypeError):
+            continue
+        if 0 <= val <= 5:
+            normalized_scores[str(name).strip().lower()] = val
+        else:
             raise ValueError(
                 f"Skill score for '{name}' must be between 0 and 5"
             )
@@ -42,10 +46,23 @@ def analyze_skill_gap(job_id: str, assessed_skills: dict):
     matched = []
     gaps = []
     total_score = 0
+    assessed_count = 0
+    unassessed = []
 
     for skill in required_skills:
-        score = normalized_scores.get(skill.lower(), 0)
+        score = normalized_scores.get(skill.lower())
+
+        if score is None:
+            unassessed.append({
+                "skill": skill,
+                "score": None,
+                "maximumScore": 5,
+                "status": "Not assessed"
+            })
+            continue
+
         total_score += score
+        assessed_count += 1
 
         item = {
             "skill": skill,
@@ -62,8 +79,8 @@ def analyze_skill_gap(job_id: str, assessed_skills: dict):
             })
 
     readiness = round(
-        total_score / (len(required_skills) * 5) * 100
-    ) if required_skills else 0
+        total_score / (assessed_count * 5) * 100
+    ) if assessed_count else 0
 
     roadmap = [
         {
@@ -80,5 +97,7 @@ def analyze_skill_gap(job_id: str, assessed_skills: dict):
         "readinessScore": readiness,
         "matchedSkills": matched,
         "skillGaps": gaps,
+        "unassessedSkills": unassessed,
+        "assessedSkillCount": assessed_count,
         "roadmap": roadmap
     }

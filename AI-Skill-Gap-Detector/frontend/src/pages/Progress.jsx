@@ -1,389 +1,65 @@
-import React from "react";
+import React, { useMemo } from "react";
 import "../styles/progress.css";
 
+const readJson = (key, fallback) => {
+  try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
+};
+
 function Progress() {
-  const progressData = {
-    readiness: 68,
-    technical: 72,
-    reasoning: 84,
-    aptitude: 68,
-    roadmap: 42,
-    dailyPlan: 35,
-    projects: 2,
-  };
-
-  return (
-    <div className="progress-page">
-      <main className="progress-container">
-
-        {/* Header */}
-        <section className="progress-header">
-          <div>
-            <p className="progress-label">YOUR LEARNING JOURNEY</p>
-            <h1>My Progress</h1>
-            <p>
-              Track your skills, assessments, roadmap and overall job readiness.
-            </p>
-          </div>
-
-          <div className="target-job">
-            <span>Target Job</span>
-            <strong>MERN Developer</strong>
-          </div>
-        </section>
-
-        {/* Readiness Score */}
-        <section className="readiness-card">
-
-          <div className="readiness-score">
-            <div className="score-circle">
-              <div>
-                <strong>{progressData.readiness}%</strong>
-                <span>Ready</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="readiness-content">
-            <span className="section-tag">JOB READINESS</span>
-            <h2>You're making good progress!</h2>
-
-            <p>
-              Your current skills are developing well. Continue working on
-              your high-priority skill gaps to become job-ready.
-            </p>
-
-            <div className="readiness-bar">
-              <div
-                className="readiness-fill"
-                style={{ width: `${progressData.readiness}%` }}
-              ></div>
-            </div>
-
-            <div className="readiness-info">
-              <span>Current: {progressData.readiness}%</span>
-              <span>Target: 90%</span>
-            </div>
-          </div>
-
-        </section>
-
-        {/* Statistics */}
-        <section className="progress-stats">
-
-          <div className="progress-stat-card">
-            <div className="stat-icon blue">✓</div>
-            <div>
-              <strong>100</strong>
-              <span>Questions Attempted</span>
-            </div>
-          </div>
-
-          <div className="progress-stat-card">
-            <div className="stat-icon green">★</div>
-            <div>
-              <strong>75%</strong>
-              <span>Assessment Score</span>
-            </div>
-          </div>
-
-          <div className="progress-stat-card">
-            <div className="stat-icon purple">↗</div>
-            <div>
-              <strong>5</strong>
-              <span>Skills Improved</span>
-            </div>
-          </div>
-
-          <div className="progress-stat-card">
-            <div className="stat-icon orange">◆</div>
-            <div>
-              <strong>{progressData.projects}</strong>
-              <span>Projects Completed</span>
-            </div>
-          </div>
-
-        </section>
-
-        {/* Assessment Progress */}
-        <section className="progress-section">
-
-          <div className="section-heading">
-            <div>
-              <span className="section-tag">ASSESSMENT</span>
-              <h2>Assessment Performance</h2>
-            </div>
-
-            <span className="overall-score">Overall 75%</span>
-          </div>
-
-          <div className="assessment-progress">
-
-            <div className="assessment-item">
-              <div className="assessment-top">
-                <span>Technical Skills</span>
-                <strong>{progressData.technical}%</strong>
-              </div>
-
-              <div className="progress-track">
-                <div
-                  className="progress-fill blue-fill"
-                  style={{ width: `${progressData.technical}%` }}
-                ></div>
-              </div>
-
-              <small>50 questions</small>
-            </div>
-
-            <div className="assessment-item">
-              <div className="assessment-top">
-                <span>Logical Reasoning</span>
-                <strong>{progressData.reasoning}%</strong>
-              </div>
-
-              <div className="progress-track">
-                <div
-                  className="progress-fill green-fill"
-                  style={{ width: `${progressData.reasoning}%` }}
-                ></div>
-              </div>
-
-              <small>25 questions</small>
-            </div>
-
-            <div className="assessment-item">
-              <div className="assessment-top">
-                <span>Aptitude</span>
-                <strong>{progressData.aptitude}%</strong>
-              </div>
-
-              <div className="progress-track">
-                <div
-                  className="progress-fill purple-fill"
-                  style={{ width: `${progressData.aptitude}%` }}
-                ></div>
-              </div>
-
-              <small>25 questions</small>
-            </div>
-
-          </div>
-        </section>
-
-        {/* Learning Progress */}
-        <section className="progress-section">
-
-          <div className="section-heading">
-            <div>
-              <span className="section-tag">LEARNING</span>
-              <h2>Learning Progress</h2>
-            </div>
-          </div>
-
-          <div className="learning-grid">
-
-            {/* Roadmap */}
-            <div className="learning-card">
-
-              <div className="learning-card-header">
-                <div className="learning-icon blue-icon">🗺</div>
-
-                <div>
-                  <h3>Career Roadmap</h3>
-                  <p>6-week MERN roadmap</p>
-                </div>
-
-                <strong>{progressData.roadmap}%</strong>
-              </div>
-
-              <div className="progress-track">
-                <div
-                  className="progress-fill blue-fill"
-                  style={{ width: `${progressData.roadmap}%` }}
-                ></div>
-              </div>
-
-              <p className="progress-detail">
-                2 of 6 weeks completed
-              </p>
-
-            </div>
-
-            {/* Daily Plan */}
-            <div className="learning-card">
-
-              <div className="learning-card-header">
-                <div className="learning-icon green-icon">📅</div>
-
-                <div>
-                  <h3>Daily Learning Plan</h3>
-                  <p>42-day learning plan</p>
-                </div>
-
-                <strong>{progressData.dailyPlan}%</strong>
-              </div>
-
-              <div className="progress-track">
-                <div
-                  className="progress-fill green-fill"
-                  style={{ width: `${progressData.dailyPlan}%` }}
-                ></div>
-              </div>
-
-              <p className="progress-detail">
-                15 of 42 days completed
-              </p>
-
-            </div>
-
-          </div>
-        </section>
-
-        {/* Skill Improvement */}
-        <section className="progress-section">
-
-          <div className="section-heading">
-            <div>
-              <span className="section-tag">SKILLS</span>
-              <h2>Skill Improvement</h2>
-            </div>
-          </div>
-
-          <div className="skills-table">
-
-            <div className="skill-row skill-header">
-              <span>Skill</span>
-              <span>Before</span>
-              <span>Current</span>
-              <span>Target</span>
-              <span>Progress</span>
-            </div>
-
-            <div className="skill-row">
-              <span className="skill-name">JavaScript</span>
-              <span>55%</span>
-              <span>70%</span>
-              <span>85%</span>
-
-              <div className="mini-progress">
-                <div style={{ width: "50%" }}></div>
-              </div>
-            </div>
-
-            <div className="skill-row">
-              <span className="skill-name">React.js</span>
-              <span>40%</span>
-              <span>60%</span>
-              <span>80%</span>
-
-              <div className="mini-progress">
-                <div style={{ width: "50%" }}></div>
-              </div>
-            </div>
-
-            <div className="skill-row">
-              <span className="skill-name">Node.js</span>
-              <span>50%</span>
-              <span>65%</span>
-              <span>75%</span>
-
-              <div className="mini-progress">
-                <div style={{ width: "60%" }}></div>
-              </div>
-            </div>
-
-            <div className="skill-row">
-              <span className="skill-name">MongoDB</span>
-              <span>65%</span>
-              <span>72%</span>
-              <span>75%</span>
-
-              <div className="mini-progress">
-                <div style={{ width: "70%" }}></div>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* Weekly Activity */}
-        <section className="progress-section">
-
-          <div className="section-heading">
-            <div>
-              <span className="section-tag">ACTIVITY</span>
-              <h2>Weekly Learning Activity</h2>
-            </div>
-          </div>
-
-          <div className="weekly-chart">
-
-            <div className="chart-day">
-              <div className="chart-bar" style={{ height: "55%" }}></div>
-              <span>Mon</span>
-            </div>
-
-            <div className="chart-day">
-              <div className="chart-bar" style={{ height: "75%" }}></div>
-              <span>Tue</span>
-            </div>
-
-            <div className="chart-day">
-              <div className="chart-bar" style={{ height: "45%" }}></div>
-              <span>Wed</span>
-            </div>
-
-            <div className="chart-day">
-              <div className="chart-bar" style={{ height: "85%" }}></div>
-              <span>Thu</span>
-            </div>
-
-            <div className="chart-day">
-              <div className="chart-bar" style={{ height: "65%" }}></div>
-              <span>Fri</span>
-            </div>
-
-            <div className="chart-day">
-              <div className="chart-bar" style={{ height: "90%" }}></div>
-              <span>Sat</span>
-            </div>
-
-            <div className="chart-day">
-              <div className="chart-bar" style={{ height: "30%" }}></div>
-              <span>Sun</span>
-            </div>
-
-          </div>
-
-        </section>
-
-        {/* Bottom CTA */}
-        <section className="progress-cta">
-
-          <div>
-            <span className="section-tag">NEXT STEP</span>
-            <h2>Keep improving your skills 🚀</h2>
-            <p>
-              Follow your roadmap and complete your daily learning tasks
-              to increase your job readiness score.
-            </p>
-          </div>
-
-          <div className="cta-buttons">
-            <a href="/roadmap" className="primary-btn">
-              Continue Roadmap →
-            </a>
-
-            <a href="/skill-gap" className="secondary-btn">
-              View Skill Gaps
-            </a>
-          </div>
-
-        </section>
-
-      </main>
-    </div>
-  );
+  const data = useMemo(() => {
+    const results = readJson("assessmentResults", null);
+    const selectedJob = localStorage.getItem("selectedJob") || "Your selected role";
+    let targetJob = selectedJob;
+    try {
+      const parsedJob = JSON.parse(selectedJob);
+      targetJob = typeof parsedJob === "string" ? parsedJob : parsedJob?.title || "Your selected role";
+    } catch { /* legacy plain-text job title */ }
+    const completedWeeks = readJson(`roadmapCompletedWeeks:${targetJob}`, []);
+    const completedDays = readJson(`completedDailyPlan:${targetJob}`, []);
+    const ratings = results?.technicalRatings || readJson("technicalSkillRatings", {});
+    const skills = Object.entries(ratings).filter(([, value]) => Number.isFinite(Number(value)));
+    const technicalAnswers = readJson("technicalAssessmentAnswers", {});
+    const aptitudeAnswers = readJson("aptitudeAssessmentAnswers", {});
+    const reasoningAnswers = readJson("reasoningAssessmentAnswers", {});
+    return {
+      results,
+      targetJob,
+      readiness: Number(results?.overallScore) || 0,
+      technical: Number(results?.technicalScore) || 0,
+      aptitude: Number(results?.aptitudeScore) || 0,
+      reasoning: Number(results?.reasoningScore) || 0,
+      completedWeeks,
+      completedDays,
+      dailyPlan: Math.round((completedDays.length / 42) * 100),
+      roadmap: Math.round((completedWeeks.length / 6) * 100),
+      skills,
+      attempted: Object.keys(technicalAnswers).length + Object.keys(aptitudeAnswers).length + Object.keys(reasoningAnswers).length,
+    };
+  }, []);
+
+  const assessmentsTaken = [data.technical, data.reasoning, data.aptitude].filter(Boolean).length;
+  const assessmentCards = [
+    ["Technical & Coding", data.technical, "blue-fill", "5 React challenges"],
+    ["Logical Reasoning", data.reasoning, "green-fill", "Reasoning assessment"],
+    ["Aptitude", data.aptitude, "purple-fill", "Aptitude assessment"],
+  ];
+
+  return <div className="progress-page"><main className="progress-container">
+    <section className="progress-header"><div><p className="progress-label">YOUR LEARNING JOURNEY</p><h1>My Progress</h1><p>Track completed assessments, roadmap progress, and job readiness from your real results.</p></div><div className="target-job"><span>Target Job</span><strong>{data.targetJob}</strong></div></section>
+    <section className="readiness-card"><div className="readiness-score"><div className="score-circle"><div><strong>{data.readiness}%</strong><span>Ready</span></div></div></div><div className="readiness-content"><span className="section-tag">JOB READINESS</span><h2>{data.results ? "Your assessment snapshot" : "Start your first assessment"}</h2><p>{data.results ? "Your readiness is calculated from assessments you have completed." : "Complete the assessments to see a real readiness score and skill-gap summary."}</p><div className="readiness-bar"><div className="readiness-fill" style={{ width: `${data.readiness}%` }} /></div><div className="readiness-info"><span>Current: {data.readiness}%</span><span>Target: 90%</span></div></div></section>
+    <section className="progress-stats"><div className="progress-stat-card"><div className="stat-icon blue">✓</div><div><strong>{data.attempted}</strong><span>Questions Attempted</span></div></div><div className="progress-stat-card"><div className="stat-icon green">★</div><div><strong>{data.readiness}%</strong><span>Assessment Score</span></div></div><div className="progress-stat-card"><div className="stat-icon purple">↗</div><div><strong>{data.skills.length}</strong><span>Skills Assessed</span></div></div><div className="progress-stat-card"><div className="stat-icon orange">◆</div><div><strong>{data.completedWeeks.length}</strong><span>Roadmap Weeks Done</span></div></div></section>
+    <section className="progress-section"><div className="section-heading"><div><span className="section-tag">ASSESSMENT</span><h2>Assessment Performance</h2></div><span className="overall-score">Overall {data.readiness}%</span></div><div className="assessment-progress">{assessmentCards.map(([name, score, color, detail]) => <div className="assessment-item" key={name}><div className="assessment-top"><span>{name}</span><strong>{score}%</strong></div><div className="progress-track"><div className={`progress-fill ${color}`} style={{ width: `${score}%` }} /></div><small>{detail}</small></div>)}</div></section>
+    <section className="progress-section">
+      <div className="section-heading"><div><span className="section-tag">LEARNING</span><h2>Learning Progress</h2></div></div>
+      <div className="learning-grid">
+        <div className="learning-card"><div className="learning-card-header"><div className="learning-icon blue-icon">🗺</div><div><h3>Career Roadmap</h3><p>6-week personalised roadmap</p></div><strong>{data.roadmap}%</strong></div><div className="progress-track"><div className="progress-fill blue-fill" style={{ width: `${data.roadmap}%` }} /></div><p className="progress-detail">{data.completedWeeks.length} of 6 weeks completed</p></div>
+        <div className="learning-card"><div className="learning-card-header"><div className="learning-icon green-icon">📅</div><div><h3>Daily Learning Plan</h3><p>42 role-based tasks</p></div><strong>{data.dailyPlan}%</strong></div><div className="progress-track"><div className="progress-fill green-fill" style={{ width: `${data.dailyPlan}%` }} /></div><p className="progress-detail">{data.completedDays.length} of 42 daily tasks completed</p></div>
+      </div>
+    </section>
+    <section className="progress-section"><div className="section-heading"><div><span className="section-tag">SKILLS</span><h2>Skill Improvement</h2></div></div><div className="skills-table"><div className="skill-row skill-header"><span>Skill</span><span>Current</span><span>Target</span><span>Progress</span></div>{data.skills.length ? data.skills.map(([skill, rating]) => { const current = Math.round((Number(rating) / 5) * 100); return <div className="skill-row" key={skill}><span className="skill-name">{skill}</span><span>{current}%</span><span>90%</span><div className="mini-progress"><div style={{ width: `${current}%` }} /></div></div>; }) : <div className="skill-row"><span className="skill-name">No skills assessed yet</span><span>—</span><span>—</span><span>Complete an assessment to see results.</span></div>}</div></section>
+    <section className="progress-section" id="weekly-insights"><div className="section-heading"><div><span className="section-tag">WEEKLY INSIGHTS</span><h2>Weekly Learning Summary</h2></div></div><div className="learning-grid"><div className="learning-card"><h3>{data.completedWeeks.length} roadmap weeks completed</h3><p className="progress-detail">Continue your roadmap to build a consistent learning record.</p></div><div className="learning-card"><h3>{assessmentsTaken} assessment sections completed</h3><p className="progress-detail">Your current assessment average is {data.readiness}%.</p></div></div></section>
+    <section className="progress-cta"><div><span className="section-tag">NEXT STEP</span><h2>Keep improving your skills 🚀</h2><p>Use your roadmap and skill-gap review to choose the next area to practise.</p></div><div className="cta-buttons"><a href="/roadmap" className="primary-btn">Continue Roadmap →</a><a href="/skill-gap" className="secondary-btn">View Skill Gaps</a></div></section>
+  </main></div>;
 }
 
 export default Progress;

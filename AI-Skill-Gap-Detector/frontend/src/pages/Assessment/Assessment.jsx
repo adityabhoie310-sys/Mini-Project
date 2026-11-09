@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/assessment.css";
 
@@ -7,25 +7,48 @@ function Assessment() {
   const navigate = useNavigate();
 
 
-  const selectedJob = JSON.parse(
-    localStorage.getItem("selectedJob")
-  );
+  const selectedJob = useMemo(() => {
+    try { return JSON.parse(localStorage.getItem("selectedJob") || "null"); } catch { return null; }
+  }, []);
+  const technicalTracks = {
+    "Backend Developer": {
+      questions: "5 Backend challenges",
+      description: "Complete backend technical and coding exercises with automatic test-case scoring.",
+      topics: ["HTTP, REST & authentication", "SQL/NoSQL & indexes", "Architecture, caching & queues", "Concurrency & rate limiting"],
+    },
+    "MERN Stack Developer": {
+      questions: "5 MERN challenges",
+      description: "Complete full-stack challenges covering MongoDB, Express, React, Node.js, and deployment decisions.",
+      topics: ["MongoDB & Mongoose", "Express & JWT", "React API integration", "Node.js & full-stack architecture"],
+    },
+    "Data Analyst": {
+      questions: "5 Data Analyst challenges",
+      description: "Complete data analysis challenges with automatic test-case scoring.",
+      topics: ["SQL aggregation", "Excel-style lookups", "Statistics & A/B testing", "Data cleaning & KPIs"],
+    },
+    "Machine Learning Engineer": {
+      questions: "5 ML Engineer challenges",
+      description: "Complete machine-learning challenges covering evaluation, optimisation, deep learning, and MLOps.",
+      topics: ["ML fundamentals & metrics", "Deep learning", "Math & optimisation", "MLOps & deployment"],
+    },
+    "Frontend Developer": {
+    questions: "5 Frontend challenges",
+    description: "Complete frontend technical and coding exercises with automatic test-case scoring.",
+    topics: ["JavaScript core & async", "Semantic HTML, CSS & accessibility", "React hooks & rendering", "Performance, browser APIs & security"],
+    },
+  };
+  const trackName = selectedJob?.title || "Frontend Developer";
+  const technicalTrack = technicalTracks[trackName] || technicalTracks["Frontend Developer"];
 
   const sections = [
     {
       id: 1,
-      title: "Technical Coding Skills",
+      title: "Technical & Coding Skills",
       icon: "💻",
-      questions: "5 React challenges",
+      questions: technicalTrack.questions,
       duration: "30 Minutes",
-      description:
-        "Solve live JavaScript coding challenges and validate each solution against test cases.",
-      topics: [
-        "JavaScript Functions",
-        "Arrays & Strings",
-        "Problem Solving",
-        "Local Test Cases",
-      ],
+      description: technicalTrack.description,
+      topics: technicalTrack.topics,
     },
     {
       id: 2,
@@ -93,14 +116,14 @@ function Assessment() {
           <h2>Complete Your Assessment</h2>
 
           <p>
-            This assessment contains three live coding challenges and 50
+            This assessment contains five technical and coding challenges and 50
             reasoning and aptitude questions. Your results will identify skill gaps
             and generate your personalized AI career roadmap.
           </p>
         </div>
 
         <div className="assessment-total">
-          <strong>53</strong>
+          <strong>55</strong>
           <span>Total Exercises</span>
         </div>
       </section>
@@ -203,8 +226,8 @@ function Assessment() {
           <h2>Ready to Start?</h2>
 
           <p>
-            Start with the Technical Skills assessment.
-            You will start with three live coding challenges.
+            Start with the Technical & Coding assessment.
+            You will begin with five practical {trackName.replace(" Developer", "")} challenges.
           </p>
         </div>
 

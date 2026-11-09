@@ -141,22 +141,15 @@ export default function SkillGap() {
   const reportRef = useRef(null);
 
   const selectedJob = readLocalStorage("selectedJob", {});
+  const technicalResult = readLocalStorage("technicalAssessmentAnswers", null);
   const storedRatings = readLocalStorage("technicalSkillRatings", null);
   const assessmentResults = readLocalStorage("assessmentResults", null);
   
   const savedRatings =
+    technicalResult?.skillRatings ||
     storedRatings ||
-    assessmentResults?.technicalRatings || {
-      HTML: 3,
-      CSS: 3,
-      JavaScript: 3,
-      React: 2,
-      "Node.js": 2,
-      "Express.js": 2,
-      MongoDB: 2,
-      "REST API": 2,
-      Git: 3,
-    };
+    assessmentResults?.technicalRatings ||
+    {};
 
   const jobTitle =
     typeof selectedJob === "string"
@@ -174,55 +167,70 @@ export default function SkillGap() {
       ? savedRatings.ratings
       : savedRatings;
 
-  const hasRatings = Boolean(storedRatings || assessmentResults?.technicalRatings);
+  const hasRatings = Object.values(ratings || {}).some(
+    (rating) => Number.isFinite(Number(rating)) && Number(rating) >= 0 && Number(rating) <= 5
+  );
+
+  const displaySkills = useMemo(() => {
+    const assessedKeys = Object.keys(ratings || {}).filter((key) =>
+      Number.isFinite(Number(ratings[key]))
+    );
+    if (!assessedKeys.length) return SKILLS;
+    return assessedKeys.map((key) => ({
+      key,
+      name: SKILLS.find((skill) => skill.key === key)?.name || key,
+    }));
+  }, [ratings]);
 
   const skillGaps = useMemo(() => {
-    return SKILLS.map(({ name, key }) => {
+    return displaySkills.map(({ name, key }) => {
       const rawRating = Number(ratings?.[key]);
       const validRating =
         Number.isFinite(rawRating) && rawRating >= 0 && rawRating <= 5;
 
-      const currentLevel = validRating ? rawRating : 0;
+      const currentLevel = validRating ? rawRating : null;
       const requiredLevel = requirements[key] ?? 3;
-      const gapLevel = Math.max(requiredLevel - currentLevel, 0);
+      const gapLevel = validRating ? Math.max(requiredLevel - currentLevel, 0) : null;
 
       return {
         skill: name,
         key,
         currentLevel,
         requiredLevel,
-        current: currentLevel * 20,
+        current: validRating ? currentLevel * 20 : 0,
         required: requiredLevel * 20,
         gapLevel,
-        gap: gapLevel * 20,
-        priority: getPriority(gapLevel),
-        status: getStatus(gapLevel),
+        gap: validRating ? gapLevel * 20 : null,
+        priority: validRating ? getPriority(gapLevel) : "Not assessed",
+        status: validRating ? getStatus(gapLevel) : "Not assessed",
       };
     });
-  }, [ratings, requirements]);
+  }, [displaySkills, ratings, requirements]);
 
-  const overallScore = Math.round(
-    skillGaps.reduce((sum, item) => sum + item.current, 0) /
-      skillGaps.length
-  );
+  const assessedSkills = skillGaps.filter((item) => item.currentLevel !== null);
+  const overallScore = assessedSkills.length
+    ? Math.round(assessedSkills.reduce((sum, item) => sum + item.current, 0) / assessedSkills.length)
+    : 0;
 
   const requiredScore = Math.round(
     skillGaps.reduce((sum, item) => sum + item.required, 0) /
       skillGaps.length
   );
 
-  const missingSkills = skillGaps.filter((item) => item.gapLevel > 0);
+  const missingSkills = skillGaps.filter((item) => item.gapLevel !== null && item.gapLevel > 0);
 
   const highPriorityCount = skillGaps.filter(
     (item) => item.priority === "High"
   ).length;
 
-  const jobReadiness =
-    requiredScore > 0
-      ? Math.min(100, Math.round((overallScore / requiredScore) * 100))
-      : 0;
+  const assessedRequiredScore = assessedSkills.length
+    ? Math.round(assessedSkills.reduce((sum, item) => sum + item.required, 0) / assessedSkills.length)
+    : 0;
+  const jobReadiness = assessedRequiredScore > 0
+    ? Math.min(100, Math.round((overallScore / assessedRequiredScore) * 100))
+    : 0;
 
-  const priorityOrder = { High: 0, Medium: 1, Low: 2, Ready: 3 };
+  const priorityOrder = { High: 0, Medium: 1, Low: 2, Ready: 3, "Not assessed": 4 };
 
   const prioritizedSkills = [...skillGaps].sort(
     (a, b) =>
@@ -266,7 +274,7 @@ export default function SkillGap() {
   };
 
   const topRecommendations = prioritizedSkills
-    .filter((item) => item.gapLevel > 0)
+    .filter((item) => item.gapLevel !== null && item.gapLevel > 0)
     .slice(0, 3);
 
   return (
@@ -278,7 +286,7 @@ export default function SkillGap() {
             <h1>Your Skill Gap Analysis</h1>
             <p>
               Your current ratings are compared with the target proficiency
-              levels for your selected career.
+              levels for your selected career. Only skills covered by your completed assessment are scored.
             </p>
           </div>
 
@@ -304,9 +312,7 @@ export default function SkillGap() {
         >
           <h3>Complete your technical skills assessment</h3>
           <p>
-            No skill ratings were found. The report currently uses zero for
-            your current proficiency. Complete the rating assessment to get
-            a meaningful analysis.
+            No completed technical evidence was found. Complete the Technical & Coding Assessment to calculate verified skill gaps.
           </p>
           <button
             type="button"
@@ -363,13 +369,13 @@ export default function SkillGap() {
         <div className="summary-card">
           <span>Current Skill Score</span>
           <h2>{overallScore}%</h2>
-          <p>Average self-rating</p>
+          <p>Average of assessed skills</p>
         </div>
 
         <div className="summary-card">
           <span>Skills With Gaps</span>
           <h2>{missingSkills.length}</h2>
-          <p>Skills below target</p>
+          <p>Assessed skills below target</p>
         </div>
 
         <div className="summary-card">
@@ -413,7 +419,7 @@ export default function SkillGap() {
 
               <div className="skill-info">
                 <span>
-                  Current: {item.currentLevel}/5 ({item.current}%)
+                  Current: {item.currentLevel === null ? "Not assessed" : `${item.currentLevel}/5 (${item.current}%)`}
                 </span>
                 <span>
                   Required: {item.requiredLevel}/5 ({item.required}%)
@@ -434,9 +440,14 @@ export default function SkillGap() {
               <div className="skill-bottom">
                 <span className="status">{item.status}</span>
                 <span className="gap">
-                  Gap: {item.gapLevel} level(s) / {item.gap}%
+                  {item.gapLevel === null ? "Assessment needed" : `Gap: ${item.gapLevel} level(s) / ${item.gap}%`}
                 </span>
               </div>
+              {item.gapLevel !== null && item.gapLevel > 0 && (
+                <button className="skill-practice-btn" type="button" onClick={() => navigate("/coding-practice")}>
+                  Practise {item.skill} →
+                </button>
+              )}
             </article>
           ))}
         </div>
@@ -450,7 +461,7 @@ export default function SkillGap() {
           {!hasRatings ? (
             <p>
               Complete your technical skills assessment first. Your
-              recommendations will then be based on your ratings.
+              recommendations will then be based on your completed exercises.
             </p>
           ) : topRecommendations.length === 0 ? (
             <p>
@@ -474,9 +485,7 @@ export default function SkillGap() {
           )}
 
           <p>
-            These recommendations are generated from configured job
-            requirements and your self-ratings; they are not a verified
-            external industry benchmark.
+            These recommendations are calculated from your passed assessment exercises and configured role requirements.
           </p>
         </div>
       </section>

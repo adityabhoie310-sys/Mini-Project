@@ -258,6 +258,21 @@
   font-weight: 600;
 }
 
+.skill-practice-btn {
+  margin-top: 18px;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.skill-practice-btn:hover {
+  background: #dbeafe;
+}
+
 /* AI Recommendation */
 
 .ai-recommendation {

@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/assessmentResult.css";
+import api from "../../services/api";
 
 const SKILLS = [
   { key: "HTML", name: "HTML" },
@@ -20,6 +21,10 @@ const JOB_REQUIREMENTS = {
     HTML: 4, CSS: 4, JavaScript: 5, React: 4, "Node.js": 4,
     "Express.js": 4, MongoDB: 4, "REST API": 4, Git: 4,
   },
+  "MERN Stack Developer": {
+    HTML: 4, CSS: 4, JavaScript: 5, React: 4, "Node.js": 4,
+    "Express.js": 4, MongoDB: 4, "REST API": 4, Git: 4,
+  },
   "Frontend Developer": {
     HTML: 5, CSS: 5, JavaScript: 5, React: 4, "Node.js": 2,
     "Express.js": 1, MongoDB: 1, "REST API": 3, Git: 4,
@@ -28,13 +33,17 @@ const JOB_REQUIREMENTS = {
     HTML: 1, CSS: 1, JavaScript: 4, React: 1, "Node.js": 5,
     "Express.js": 5, MongoDB: 4, "REST API": 5, Git: 4,
   },
+  "Data Analyst": {
+    SQL: 5, Excel: 4, Statistics: 4, "Data Cleaning": 4,
+    "KPIs & Analytics": 4, Python: 4, Git: 3,
+  },
   "Data Scientist": {
     HTML: 1, CSS: 1, JavaScript: 2, React: 1, "Node.js": 1,
     "Express.js": 1, MongoDB: 3, "REST API": 3, Git: 4,
   },
   "Machine Learning Engineer": {
-    HTML: 1, CSS: 1, JavaScript: 2, React: 1, "Node.js": 2,
-    "Express.js": 2, MongoDB: 3, "REST API": 4, Git: 4,
+    "ML Fundamentals": 5, "Model Evaluation": 4, "Deep Learning": 4,
+    "ML Mathematics": 4, MLOps: 4, Python: 5, "Machine Learning": 4, Git: 4,
   },
   "DevOps Engineer": {
     HTML: 1, CSS: 1, JavaScript: 2, React: 1, "Node.js": 2,
@@ -112,8 +121,11 @@ function normalizeJobTitle(title = "") {
   if (normalized.includes("backend") || normalized.includes("back-end")) {
     return "Backend Developer";
   }
-  if (normalized.includes("machine learning")) {
+  if (normalized.includes("machine learning") || normalized.includes("ai engineer") || normalized.includes("artificial intelligence")) {
     return "Machine Learning Engineer";
+  }
+  if (normalized.includes("data analyst") || normalized.includes("analytics") || normalized.includes("data analysis")) {
+    return "Data Analyst";
   }
   if (normalized.includes("data scientist")) {
     return "Data Scientist";
@@ -125,11 +137,11 @@ function normalizeJobTitle(title = "") {
     return "Cloud Solutions Architect";
   }
   if (
+    normalized.includes("mern") ||
     normalized.includes("full stack") ||
-    normalized.includes("full-stack") ||
-    normalized.includes("mern")
+    normalized.includes("full-stack")
   ) {
-    return "Full Stack Developer";
+    return "MERN Stack Developer";
   }
   return title;
 }
@@ -167,17 +179,20 @@ function AssessmentResult() {
 
   const selectedJob = rawSelectedJob;
   const normalizedJob = normalizeJobTitle(selectedJob);
+  const reportGeneratedAt = useMemo(() => new Date().toISOString(), []);
 
   const requirements =
     JOB_REQUIREMENTS[normalizedJob] ||
     JOB_REQUIREMENTS[selectedJob] ||
     JOB_REQUIREMENTS["Full Stack Developer"];
 
-  const hasTechnicalRatings = SKILLS.every(
-    (skill) =>
-      Number.isFinite(technicalRatings[skill.key]) &&
-      technicalRatings[skill.key] >= 0 &&
-      technicalRatings[skill.key] <= 5
+  const assessedTechnicalRatings =
+    technicalAnswers.skillRatings && typeof technicalAnswers.skillRatings === "object"
+      ? technicalAnswers.skillRatings
+      : technicalRatings;
+
+  const hasTechnicalRatings = Object.values(assessedTechnicalRatings).some(
+    (rating) => Number.isFinite(rating) && rating >= 0 && rating <= 5
   );
 
   const hasTechnicalResult =
@@ -187,11 +202,11 @@ function AssessmentResult() {
 
   const technicalScore = hasTechnicalRatings
     ? Math.round(
-        (SKILLS.reduce(
-          (sum, skill) => sum + technicalRatings[skill.key],
+        (Object.values(assessedTechnicalRatings).reduce(
+          (sum, rating) => sum + rating,
           0
         ) /
-          (SKILLS.length * 5)) *
+          (Object.values(assessedTechnicalRatings).length * 5)) *
           100
       )
     : hasTechnicalResult
@@ -220,35 +235,41 @@ function AssessmentResult() {
     (technicalScore + reasoningScore + aptitudeScore) / 3
   );
 
-  // Derive ratings if not explicitly set
+  // Preserve only skill evidence produced by the combined assessment.
   const effectiveRatings = useMemo(() => {
-    if (hasTechnicalRatings) return technicalRatings;
-    const derived = {};
-    SKILLS.forEach((skill) => {
-      const req = requirements[skill.key] ?? 3;
-      const scoreRatio = technicalScore / 100;
-      derived[skill.key] = Math.max(1, Math.min(5, Math.round(req * (0.5 + 0.5 * scoreRatio))));
-    });
-    return derived;
-  }, [hasTechnicalRatings, technicalRatings, requirements, technicalScore]);
+    return hasTechnicalRatings ? assessedTechnicalRatings : {};
+  }, [hasTechnicalRatings, assessedTechnicalRatings]);
 
-  const skillGaps = SKILLS.map((skill) => {
-    const current = effectiveRatings[skill.key] ?? 3;
+  const assessmentSkillList = useMemo(() => {
+    const assessed = Object.keys(effectiveRatings).filter((key) =>
+      Number.isFinite(Number(effectiveRatings[key]))
+    );
+    if (!assessed.length) return SKILLS;
+    return assessed.map((key) => ({
+      key,
+      name: SKILLS.find((skill) => skill.key === key)?.name || key,
+    }));
+  }, [effectiveRatings]);
+
+  const skillGaps = assessmentSkillList.map((skill) => {
+    const hasEvidence = Number.isFinite(effectiveRatings[skill.key]);
+    const current = hasEvidence ? effectiveRatings[skill.key] : null;
     const required = requirements[skill.key] ?? 3;
-    const gap = Math.max(0, required - current);
+    const gap = hasEvidence ? Math.max(0, required - current) : null;
 
     return {
       ...skill,
       current,
       required,
       gap,
-      priority: getPriority(gap),
+      priority: hasEvidence ? getPriority(gap) : "Not assessed",
     };
   });
 
   const missingSkills = skillGaps
-    .filter((skill) => skill.gap > 0)
+    .filter((skill) => skill.gap !== null && skill.gap > 0)
     .sort((a, b) => b.gap - a.gap);
+  const strengthSkills = skillGaps.filter((skill) => skill.gap === 0);
 
   const results = {
     targetJob: selectedJob,
@@ -260,14 +281,11 @@ function AssessmentResult() {
     technicalRatings: effectiveRatings,
     skillGaps,
     missingSkills,
-    completedAt: new Date().toISOString(),
+    completedAt: reportGeneratedAt,
   };
 
   useEffect(() => {
     localStorage.setItem("assessmentResults", JSON.stringify(results));
-    if (!hasTechnicalRatings) {
-      localStorage.setItem("technicalSkillRatings", JSON.stringify(effectiveRatings));
-    }
   }, [
     selectedJob,
     technicalScore,
@@ -277,6 +295,23 @@ function AssessmentResult() {
     hasTechnicalRatings,
     effectiveRatings
   ]);
+
+  useEffect(() => {
+    if (!hasAssessmentData || !localStorage.getItem("token")) return;
+    api.post("/assessments/submit", {
+      breakdown: {
+        technical: technicalScore,
+        reasoning: reasoningScore,
+        aptitude: aptitudeScore,
+      },
+      completedAt: results.completedAt,
+    }).then(({ data }) => {
+      if (data?.id) localStorage.setItem("lastAssessmentResultId", data.id);
+    }).catch(() => {
+      // The local report remains available if the API is offline; a later
+      // completed assessment will retry persistence.
+    });
+  }, [hasAssessmentData, technicalScore, reasoningScore, aptitudeScore, results.completedAt]);
 
   const restartAssessment = () => {
     [
@@ -386,6 +421,20 @@ function AssessmentResult() {
         </div>
       </section>
 
+      <section className="result-insights" aria-label="Assessment insights">
+        <article>
+          <span className="insight-label">YOUR STRENGTHS</span>
+          <h2>{strengthSkills.length ? "Skills meeting your target" : "Build your first strength"}</h2>
+          <p>{strengthSkills.length ? strengthSkills.map((skill) => skill.name).join(", ") : "Pass more technical challenges to identify skills that meet the target level."}</p>
+        </article>
+        <article>
+          <span className="insight-label">TOP NEXT STEP</span>
+          <h2>{missingSkills[0]?.name || "Complete all assessment sections"}</h2>
+          <p>{missingSkills[0] ? `Close the ${missingSkills[0].gap}-level gap first; it has the highest impact on your ${selectedJob} readiness.` : "Review your roadmap and keep practising to maintain your current level."}</p>
+          <button className="insight-action" onClick={() => navigate("/coding-practice")}>Practise now →</button>
+        </article>
+      </section>
+
       <section className="score-section">
         <h2>Technical Skill Gap Analysis</h2>
         <p>
@@ -409,16 +458,16 @@ function AssessmentResult() {
                 <tr key={skill.key}>
                   <td style={{ padding: "12px" }}>{skill.name}</td>
                   <td style={{ padding: "12px", textAlign: "center" }}>
-                    {skill.current}/5
+                    {skill.current === null ? "Not assessed" : `${skill.current}/5`}
                   </td>
                   <td style={{ padding: "12px", textAlign: "center" }}>
                     {skill.required}/5
                   </td>
                   <td style={{ padding: "12px", textAlign: "center" }}>
-                    {skill.gap}
+                    {skill.gap === null ? "—" : skill.gap}
                   </td>
                   <td style={{ padding: "12px", textAlign: "center" }}>
-                    <span className={`priority-pill priority-${skill.priority.toLowerCase()}`}>
+                    <span className={`priority-pill priority-${skill.priority.toLowerCase().replace(/\s+/g, "-")}`}>
                       {skill.priority}
                     </span>
                   </td>
@@ -434,7 +483,7 @@ function AssessmentResult() {
 
         {!hasTechnicalRatings ? (
           <p>
-            Complete the Technical Skills Assessment to discover your
+            Complete the Technical & Coding Assessment to discover your
             highest-priority missing skills.
           </p>
         ) : missingSkills.length === 0 ? (

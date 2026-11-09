@@ -192,6 +192,10 @@
   border: 5px solid #f6f8fc;
 }
 
+.timeline-item.completed .timeline-marker span,
+.timeline-item.completed .complete-week-btn { background: #059669; border-color: #059669; color: #fff; }
+.timeline-item.completed .timeline-content { border-color: #a7f3d0; }
+
 .timeline-content {
   flex: 1;
   padding: 25px;

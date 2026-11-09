@@ -15,6 +15,15 @@ const Dashboard = () => {
   const readiness = Number.isFinite(results?.overallScore) ? results.overallScore : 0;
   const assessmentComplete = Boolean(results?.completedAt);
   const assessmentLabel = assessmentComplete ? "Complete" : "Not started";
+  const assessedSkills = Object.keys(results?.technicalRatings || {}).length;
+  const targetJob = (() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("selectedJob") || "null");
+      return typeof saved === "string" ? saved : saved?.title || "MERN Stack Developer";
+    } catch { return "MERN Stack Developer"; }
+  })();
+  const completedWeeks = (() => { try { return JSON.parse(localStorage.getItem(`roadmapCompletedWeeks:${targetJob}`) || "[]").length; } catch { return 0; } })();
+  const nextAction = assessmentComplete ? "Review your Skill Gap Analysis" : "Choose a target role and start your assessment";
   return (
     <div className="dashboard-page">
 
@@ -45,10 +54,7 @@ const Dashboard = () => {
               Welcome back, {name}! 👋
             </h1>
 
-            <p>
-              Discover your skill gaps and follow a personalized
-              roadmap to become job-ready.
-            </p>
+            <p>{nextAction}. Use your results to choose the next learning milestone.</p>
           </div>
 
           <Link to="/select-job" className="start-button">
@@ -79,7 +85,7 @@ const Dashboard = () => {
             <div className="stat-icon">🧠</div>
             <div>
               <span>Skills Assessed</span>
-              <h2>{assessmentComplete ? 3 : 0}</h2>
+              <h2>{assessedSkills}</h2>
             </div>
           </div>
 
@@ -87,7 +93,7 @@ const Dashboard = () => {
             <div className="stat-icon">🗺️</div>
             <div>
               <span>Roadmap Steps</span>
-              <h2>4</h2>
+              <h2>{completedWeeks}</h2>
             </div>
           </div>
 
@@ -119,8 +125,8 @@ const Dashboard = () => {
               <div className="assessment-item">
                 <span>💻</span>
                 <div>
-                  <h4>Technical Skills</h4>
-                  <p>3 practical challenges</p>
+                  <h4>Technical & Coding</h4>
+                  <p>5 role-based challenges</p>
                 </div>
               </div>
 
