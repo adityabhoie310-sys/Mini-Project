@@ -4,7 +4,7 @@
     "frontend": {
       "root": "frontend",
       "framework": "vite",
-      "installCommand": "rm -rf node_modules package-lock.json && npm install",
+      "installCommand": "npm install && npm install --no-save @rollup/rollup-linux-x64-gnu@4.64.0",
       "buildCommand": "npm run build",
       "outputDirectory": "dist"
     },
