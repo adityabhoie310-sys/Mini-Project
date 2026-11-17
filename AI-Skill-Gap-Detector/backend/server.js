@@ -35,12 +35,14 @@ const localDevelopmentOrigins = [
 const allowedOrigins = process.env.NODE_ENV === "production"
   ? configuredOrigins
   : [...new Set([...configuredOrigins, ...localDevelopmentOrigins])];
+const isVercelDeploymentOrigin = (origin) =>
+  Boolean(process.env.VERCEL && /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin || ""));
 
 app.disable("x-powered-by");
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    if (!origin || allowedOrigins.includes(origin) || isVercelDeploymentOrigin(origin)) return callback(null, true);
     return callback(new Error("Origin is not allowed by CORS"));
   },
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],

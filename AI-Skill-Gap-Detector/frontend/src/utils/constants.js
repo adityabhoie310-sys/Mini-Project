@@ -1,4 +1,7 @@
-export const API_BASE_URL = 'http://localhost:5000/api';
+// Use the local API while developing, and the same deployed domain in production.
+// Keeping this relative means preview and production deployments work without
+// hard-coded URLs or browser CORS errors.
+export const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 export const AI_SERVICE_URL = import.meta.env.VITE_AI_SERVICE_URL || 'http://127.0.0.1:8001';
 
 export const ASSESSMENT_TYPES = {
