@@ -10,19 +10,7 @@
     },
     "backend": {
       "root": "backend",
-      "entrypoint": "server.js",
-      "bindings": [
-        {
-          "type": "service",
-          "service": "ai",
-          "format": "url",
-          "env": "AI_SERVICE_URL"
-        }
-      ]
-    },
-    "ai": {
-      "root": "ai-service",
-      "entrypoint": "main:app"
+      "entrypoint": "server.js"
     }
   },
   "rewrites": [
